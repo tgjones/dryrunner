@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -14,6 +15,9 @@ namespace DryRunner
 		{
 			_port = port;
 			_siteRoot = siteRoot;
+
+			if (!Directory.Exists(_siteRoot))
+				throw new Exception("Deployment package could not be found. Ensure you have created a Test build configuration.");
 		}
 
 		public void Start()
@@ -71,6 +75,9 @@ namespace DryRunner
 
 		public void Stop()
 		{
+			if (_process == null)
+				return;
+
 			_process.CloseMainWindow();
 			_process.WaitForExit(5000);
 			if (!_process.HasExited)

@@ -11,6 +11,9 @@ namespace DryRunner
 		public TestSiteManager(int port, string projectName)
 		{
 			string siteRoot = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
+			if (!Directory.Exists(siteRoot))
+				throw new Exception("A project with name '" + projectName + "' could not be found.");
+
 			_deployer = new TestSiteDeployer(siteRoot, projectName);
 			_server = new TestSiteServer(port, _deployer.TestSitePath);
 		}
