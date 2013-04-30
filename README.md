@@ -20,11 +20,12 @@ Install the [DryRunner](https://nuget.org/packages/DryRunner) package using NuGe
 Configuration
 -------------
 
-You'll need to setup a few things before DryRunner will work:
+You'll need to setup a couple of things before DryRunner will work:
 
 # Install IIS Express on your local development machine (and build server, if you want to use DryRunner there too).
-# Create a Test [build configuration](http://msdn.microsoft.com/en-us/library/kwybya3w.aspx) for your website project.
-# 
+# Create a `Test` [build configuration](http://msdn.microsoft.com/en-us/library/kwybya3w.aspx) for your website project.
+  Note that you don't need to create a new solution configuration, only a project-level configuration for the website
+  project(s) that you want to test.
 
 Usage
 -----
@@ -45,4 +46,4 @@ testSiteManager.Stop();
 License
 -------
 
-DryRunner is released under the [MIT License](http://www.opensource.org/licenses/MIT).
+DryRunner  is released under the [MIT License](http://www.opensource.org/licenses/MIT).

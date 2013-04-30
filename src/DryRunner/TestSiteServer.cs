@@ -10,20 +10,23 @@ namespace DryRunner
 		private readonly int _port;
 		private readonly string _siteRoot;
 		private Process _process;
+		private ManualResetEventSlim _manualResetEvent;
 
 		public TestSiteServer(int port, string siteRoot)
 		{
 			_port = port;
 			_siteRoot = siteRoot;
-
-			if (!Directory.Exists(_siteRoot))
-				throw new Exception("Deployment package could not be found. Ensure you have created a Test build configuration.");
 		}
 
 		public void Start()
 		{
+			_manualResetEvent = new ManualResetEventSlim(false);
+
 			var thread = new Thread(StartIisExpress) { IsBackground = true };
 			thread.Start();
+
+			_manualResetEvent.Wait(5000);
+			_manualResetEvent.Dispose();
 		}
 
 		private void StartIisExpress()
@@ -51,6 +54,7 @@ namespace DryRunner
 				_process = new Process { StartInfo = startInfo };
 
 				_process.Start();
+				_manualResetEvent.Set();
 				_process.WaitForExit();
 			}
 			catch
@@ -62,8 +66,10 @@ namespace DryRunner
 
 		private string CreateApplicationHost()
 		{
+			var applicationHostConfigStream = typeof (TestSiteServer).Assembly.GetManifestResourceStream(
+				typeof (TestSiteServer), "applicationHost.config");
 			string applicationHost;
-			using (var reader = new StreamReader(typeof(TestSiteServer).Assembly.GetManifestResourceStream(typeof(TestSiteServer), "applicationHost.config")))
+			using (var reader = new StreamReader(applicationHostConfigStream))
 				applicationHost = reader.ReadToEnd();
 			applicationHost = applicationHost.Replace("{{PORT}}", _port.ToString());
 			applicationHost = applicationHost.Replace("{{PATH}}", _siteRoot);

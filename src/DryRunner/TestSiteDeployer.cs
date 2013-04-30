@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
@@ -30,6 +31,9 @@ namespace DryRunner
 				new BuildRequestData(Path.Combine(_siteRoot, _projectName + ".csproj"),
 					new Dictionary<string, string> { { "Configuration", "Test" } },
 					null, new[] { "Package" }, null));
+
+			if (!Directory.Exists(TestSitePath))
+				throw new Exception("Deployment package for Test build configuration not found; ensure you have a Test build configuration.");
 		}
 	}
 }
