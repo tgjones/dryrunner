@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DryRunner", "DryRunner\DryRunner.csproj", "{77553F9E-9723-4530-8FFB-4BAF23C31819}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DryRunner.TestWebsite", "DryRunner.TestWebsite\DryRunner.TestWebsite.csproj", "{84F9C241-6E18-41BD-98F7-E6213A50E4ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{77553F9E-9723-4530-8FFB-4BAF23C31819}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77553F9E-9723-4530-8FFB-4BAF23C31819}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77553F9E-9723-4530-8FFB-4BAF23C31819}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84F9C241-6E18-41BD-98F7-E6213A50E4ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84F9C241-6E18-41BD-98F7-E6213A50E4ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84F9C241-6E18-41BD-98F7-E6213A50E4ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84F9C241-6E18-41BD-98F7-E6213A50E4ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
