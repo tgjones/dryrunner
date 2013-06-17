@@ -47,7 +47,9 @@ namespace DryRunner
 	    var globalProperties = new Dictionary<string, string> { { "Configuration", "Test" } };
 	    var requestData = new BuildRequestData(projectFilePath, globalProperties, null, targetsToBuild, null);
 
-	    buildManager.BuildRequest(requestData);
+	    var result = buildManager.BuildRequest(requestData);
+      if (result.OverallResult != BuildResultCode.Success)
+        throw new Exception("Build failed; ensure you have a Test build configuration.");
 	  }
 	}
 }
