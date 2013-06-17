@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 
 namespace DryRunner
@@ -22,18 +21,33 @@ namespace DryRunner
 			_projectName = projectName;
 		}
 
-		public void Deploy()
-		{
-			// Do a build of the website project with the "Package" target. This will copy all
-			// the necessary website files into a directory similar to the following:
-			// MyProject/obj/Test/Package/PackageTmp
-			BuildManager.DefaultBuildManager.Build(new BuildParameters(new ProjectCollection()),
-				new BuildRequestData(Path.Combine(_siteRoot, _projectName + ".csproj"),
-					new Dictionary<string, string> { { "Configuration", "Test" } },
-					null, new[] { "Package" }, null));
+	  public void Deploy ()
+	  {
+	    var buildManager = BuildManager.DefaultBuildManager;
+	    buildManager.ResetCaches();
+	    buildManager.BeginBuild(new BuildParameters());
 
-			if (!Directory.Exists(TestSitePath))
-				throw new Exception("Deployment package for Test build configuration not found; ensure you have a Test build configuration.");
-		}
+	    // Clean previous deployment.
+	    BuildRequest(buildManager, "Clean");
+
+	    // Do a build of the website project with the "Package" target. This will copy all
+	    // the necessary website files into a directory similar to the following:
+	    // MyProject/obj/Test/Package/PackageTmp
+	    BuildRequest(buildManager, "Package");
+
+	    buildManager.EndBuild();
+
+	    if (!Directory.Exists(TestSitePath))
+	      throw new Exception("Deployment package for Test build configuration not found; ensure you have a Test build configuration.");
+	  }
+
+	  private void BuildRequest (BuildManager buildManager, params string[] targetsToBuild)
+	  {
+	    var projectFilePath = Path.Combine(_siteRoot, _projectName + ".csproj");
+	    var globalProperties = new Dictionary<string, string> { { "Configuration", "Test" } };
+	    var requestData = new BuildRequestData(projectFilePath, globalProperties, null, targetsToBuild, null);
+
+	    buildManager.BuildRequest(requestData);
+	  }
 	}
 }
