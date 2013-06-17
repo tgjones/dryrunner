@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Execution;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
 
 namespace DryRunner
 {
@@ -25,15 +27,16 @@ namespace DryRunner
 	  {
 	    var buildManager = BuildManager.DefaultBuildManager;
 	    buildManager.ResetCaches();
-	    buildManager.BeginBuild(new BuildParameters());
 
-	    // Clean previous deployment.
-	    BuildRequest(buildManager, "Clean");
+	    var consoleLogger = new ConsoleLogger(LoggerVerbosity.Quiet);
+	    var buildParameters = new BuildParameters { Loggers = new[] { consoleLogger } };
+	    buildManager.BeginBuild(buildParameters);
 
-	    // Do a build of the website project with the "Package" target. This will copy all
-	    // the necessary website files into a directory similar to the following:
-	    // MyProject/obj/Test/Package/PackageTmp
-	    BuildRequest(buildManager, "Package");
+	    // 1) Clean previous deployment.
+      // 2) Do a build of the website project with the "Package" target. This will copy all
+      //    the necessary website files into a directory similar to the following:
+      //    MyProject/obj/Test/Package/PackageTmp
+	    BuildRequest(buildManager, "Clean", "Package");
 
 	    buildManager.EndBuild();
 
@@ -48,8 +51,9 @@ namespace DryRunner
 	    var requestData = new BuildRequestData(projectFilePath, globalProperties, null, targetsToBuild, null);
 
 	    var result = buildManager.BuildRequest(requestData);
-      if (result.OverallResult != BuildResultCode.Success)
-        throw new Exception("Build failed; ensure you have a Test build configuration.");
+
+	    if (result.OverallResult != BuildResultCode.Success)
+	      throw new Exception("Build failed! See build output and ensure that you have a Test build configuration.");
 	  }
 	}
 }
