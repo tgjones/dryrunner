@@ -79,10 +79,15 @@ namespace DryRunner
 	        .Replace("{{PHYSICAL_PATH}}", _physicalSitePath)
 	        .Replace("{{APPLICATION_PATH}}", _applicationPath);
 
-      // There must always be a default application. So if we do not deploy to "/" we uncomment our "dummy" default application.
+      // There must always be a default application. So if we do not deploy to "/" we uncomment our dummy default application.
+      // This default application gets served from a new directory created inside the physical path of our site (to avoid access rights issues).
 	    if (_applicationPath != "/")
 	    {
+        var defaultApplicationPhysicalPath = Path.Combine(_physicalSitePath, "dummy-default-application");
+        Directory.CreateDirectory(defaultApplicationPhysicalPath);
+
 	      applicationHostConfig
+	          .Replace("{{DEFAULT_APPLICATION_PHYSICAL_PATH}}", defaultApplicationPhysicalPath)
 	          .Replace("<!--{{DEFAULT_APPLICATION_COMMENT}}", string.Empty)
 	          .Replace("{{DEFAULT_APPLICATION_COMMENT}}-->", string.Empty);
 	    }
