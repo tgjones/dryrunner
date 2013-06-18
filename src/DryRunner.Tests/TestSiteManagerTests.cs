@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using NUnit.Framework;
 
 namespace DryRunner.Tests
@@ -6,24 +7,38 @@ namespace DryRunner.Tests
 	[TestFixture]
 	public class TestSiteManagerTests
 	{
-		[Test]
-		public void CanDeploySite()
-		{
-			var testSiteManager = new TestSiteManager(9000, "DryRunner.TestWebsite");
-			testSiteManager.Start();
+	  [Test]
+	  public void CanDeploySite ()
+	  {
+	    var manager = new TestSiteManager("DryRunner.TestWebsite");
 
-			try
-			{
-				using (var webClient = new WebClient())
-				{
-					var html = webClient.DownloadString("http://localhost:9000");
-					Assert.That(html, Contains.Substring("<h1>Hello World</h1>"));
-				}
-			}
-			finally
-			{
-				testSiteManager.Stop();
-			}
-		}
+	    CheckSite(manager, "http://localhost:8888");
+	  }
+
+	  [Test]
+	  public void CanDeploySite_CustomPortAndApplicationPath ()
+	  {
+      var manager = new TestSiteManager("DryRunner.TestWebsite", port: 9000, applicationPath: "/blub");
+
+      CheckSite(manager, "http://localhost:9000/blub");
+	  }
+
+	  private static void CheckSite (TestSiteManager testSiteManager, string surfToUrl)
+	  {
+	    testSiteManager.Start();
+
+	    try
+	    {
+	      using (var webClient = new WebClient())
+	      {
+	        var html = webClient.DownloadString(surfToUrl);
+	        Assert.That(html, Contains.Substring("<h1>Hello World</h1>"));
+	      }
+	    }
+	    finally
+	    {
+	      testSiteManager.Stop();
+	    }
+	  }
 	}
 }
