@@ -16,6 +16,9 @@ namespace DryRunner
     /// <param name="applicationPath">The application path, defaults to the server root <c>"/"</c>.</param>
 	  public TestSiteManager (string projectName, int port = 8888, string applicationPath = "/")
 		{
+      if (applicationPath == null || !applicationPath.StartsWith("/"))
+        throw new ArgumentException("Application path must start with '/'.","applicationPath");
+
 			string siteRoot = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
 			if (!Directory.Exists(siteRoot))
 				throw new Exception("A project with name '" + projectName + "' could not be found.");
