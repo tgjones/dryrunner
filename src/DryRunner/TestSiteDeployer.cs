@@ -28,32 +28,36 @@ namespace DryRunner
 	    var buildManager = BuildManager.DefaultBuildManager;
 	    buildManager.ResetCaches();
 
+	    var recordingEventRedirector = new RecordingEventRedirector();
+	    var forwardingLogger = new ConfigurableForwardingLogger { BuildEventRedirector = recordingEventRedirector };
 	    var consoleLogger = new ConsoleLogger(LoggerVerbosity.Quiet);
-	    var buildParameters = new BuildParameters { Loggers = new[] { consoleLogger } };
+	    var buildParameters = new BuildParameters { Loggers = new ILogger[] { consoleLogger, forwardingLogger } };
 	    buildManager.BeginBuild(buildParameters);
 
 	    // 1) Clean previous deployment.
       // 2) Do a build of the website project with the "Package" target. This will copy all
       //    the necessary website files into a directory similar to the following:
       //    MyProject/obj/Test/Package/PackageTmp
-	    BuildRequest(buildManager, "Clean", "Package");
+	    var result = BuildRequest(buildManager, "Clean", "Package");
 
 	    buildManager.EndBuild();
 
-	    if (!Directory.Exists(TestSitePath))
-	      throw new Exception("Deployment package for Test build configuration not found; ensure you have a Test build configuration.");
+	    if (result.OverallResult != BuildResultCode.Success || !Directory.Exists(TestSitePath))
+	    {
+	      var message = "Build failed! See build output and ensure that you have a Test build configuration."
+	                    + Environment.NewLine + Environment.NewLine
+	                    + recordingEventRedirector.GetJoinedBuildMessages();
+	      throw new BuildFailedException(message);
+	    }
 	  }
 
-	  private void BuildRequest (BuildManager buildManager, params string[] targetsToBuild)
+	  private BuildResult BuildRequest (BuildManager buildManager, params string[] targetsToBuild)
 	  {
 	    var projectFilePath = Path.Combine(_siteRoot, _projectName + ".csproj");
 	    var globalProperties = new Dictionary<string, string> { { "Configuration", "Test" } };
 	    var requestData = new BuildRequestData(projectFilePath, globalProperties, null, targetsToBuild, null);
 
-	    var result = buildManager.BuildRequest(requestData);
-
-	    if (result.OverallResult != BuildResultCode.Success)
-	      throw new Exception("Build failed! See build output and ensure that you have a Test build configuration.");
+	    return buildManager.BuildRequest(requestData);
 	  }
 	}
 }
