@@ -47,7 +47,7 @@ namespace DryRunner
 				LoadUserProfile = true,
 				CreateNoWindow = false,
 				UseShellExecute = false,
-        Arguments = string.Format("/config:\"{0}\"", applicationHostPath)
+        Arguments = string.Format("/config:\"{0}\" /systray:true", applicationHostPath)
 			};
 
 			var programfiles = string.IsNullOrEmpty(startInfo.EnvironmentVariables["ProgramFiles(x86)"])
