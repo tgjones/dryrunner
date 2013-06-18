@@ -6,9 +6,16 @@ namespace DryRunner
   [Serializable]
   public class BuildFailedException : Exception
   {
-    public BuildFailedException (string message)
+    public string BuildOutput
+    {
+      get { return (string) Data["BuildOutput"]; }
+      private set { Data.Add("BuildOutput", value); }
+    }
+
+    public BuildFailedException (string message, string buildOuput)
         : base(message)
     {
+      BuildOutput = buildOuput;
     }
 
     public BuildFailedException (string message, Exception inner)
