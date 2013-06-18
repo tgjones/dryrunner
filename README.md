@@ -32,12 +32,13 @@ Usage
 
 ```csharp
 // You'd normally want to do this in a test fixture setup.
-int port = 9000; // Any port that won't conflict with other services running on your computer.
 string websiteProjectName = "DryRunner.TestWebsite";
-TestSiteManager testSiteManager = new TestSiteManager(port, websiteProjectName);
+int port = 9000; // Any port that won't conflict with other services running on your computer.
+string applicationPath = "/blub"; // Application path (optional; default is the server root "/").
+TestSiteManager testSiteManager = new TestSiteManager(websiteProjectName, port, applicationPath);
 testSiteManager.Start();
 
-// ... Run tests here
+// Run your tests and point them to: http://localhost:9000/blub
 
 // You'd normally want to do this in a test fixture teardown.
 testSiteManager.Stop();
