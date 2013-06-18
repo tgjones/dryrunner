@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading;
 
 namespace DryRunner
 {
 	public class TestSiteServer
 	{
-		private readonly int _port;
-		private readonly string _siteRoot;
-		private Process _process;
+	  private readonly string _physicalSitePath;
+	  private readonly int _port;
+	  private readonly string _applicationPath;
+
+	  private Process _process;
 		private ManualResetEventSlim _manualResetEvent;
 
-		public TestSiteServer(int port, string siteRoot)
+		public TestSiteServer(string physicalSitePath, int port, string applicationPath)
 		{
-			_port = port;
-			_siteRoot = siteRoot;
+		  _physicalSitePath = physicalSitePath;
+		  _port = port;
+		  _applicationPath = applicationPath;
 		}
 
 		public void Start()
@@ -31,7 +35,10 @@ namespace DryRunner
 
 		private void StartIisExpress()
 		{
-			var applicationHostPath = CreateApplicationHost();
+			var applicationHostConfig = CreateApplicationHostConfig();
+
+      var applicationHostPath = Path.GetFullPath("applicationHost.config");
+      File.WriteAllText(applicationHostPath, applicationHostConfig);
 
 			var startInfo = new ProcessStartInfo
 			{
@@ -40,7 +47,7 @@ namespace DryRunner
 				LoadUserProfile = true,
 				CreateNoWindow = false,
 				UseShellExecute = false,
-				Arguments = string.Format("/config:\"{0}\"", applicationHostPath)
+        Arguments = string.Format("/config:\"{0}\"", applicationHostPath)
 			};
 
 			var programfiles = string.IsNullOrEmpty(startInfo.EnvironmentVariables["ProgramFiles(x86)"])
@@ -64,30 +71,41 @@ namespace DryRunner
 			}
 		}
 
-		private string CreateApplicationHost()
-		{
-			var applicationHostConfigStream = typeof (TestSiteServer).Assembly.GetManifestResourceStream(
-				typeof (TestSiteServer), "applicationHost.config");
-			string applicationHost;
-			using (var reader = new StreamReader(applicationHostConfigStream))
-				applicationHost = reader.ReadToEnd();
-			applicationHost = applicationHost.Replace("{{PORT}}", _port.ToString());
-			applicationHost = applicationHost.Replace("{{PATH}}", _siteRoot);
+	  private string CreateApplicationHostConfig()
+	  {
+	    var applicationHostConfig = new StringBuilder(GetApplicationHostConfigTemplate());
+	    applicationHostConfig
+	        .Replace("{{PORT}}", _port.ToString())
+	        .Replace("{{PHYSICAL_PATH}}", _physicalSitePath)
+	        .Replace("{{APPLICATION_PATH}}", _applicationPath);
 
-			string applicationHostPath = Path.GetFullPath("applicationHost.config");
-			File.WriteAllText(applicationHostPath, applicationHost);
-			return applicationHostPath;
+      // There must always be a default application. So if we do not deploy to "/" we uncomment our "dummy" default application.
+	    if (_applicationPath != "/")
+	    {
+	      applicationHostConfig
+	          .Replace("<!--{{DEFAULT_APPLICATION_COMMENT}}", string.Empty)
+	          .Replace("{{DEFAULT_APPLICATION_COMMENT}}-->", string.Empty);
+	    }
+
+	    return applicationHostConfig.ToString();
 		}
 
-		public void Stop()
-		{
-			if (_process == null)
-				return;
+	  private string GetApplicationHostConfigTemplate ()
+	  {
+      using (var stream = GetType().Assembly.GetManifestResourceStream(typeof(TestSiteServer), "applicationHost.config"))
+      using (var reader = new StreamReader(stream))
+        return reader.ReadToEnd();
+	  }
 
-			_process.CloseMainWindow();
-			_process.WaitForExit(5000);
-			if (!_process.HasExited)
-				_process.Kill();
-		}
+	  public void Stop()
+	  {
+	    if (_process == null)
+	      return;
+
+	    _process.CloseMainWindow();
+	    _process.WaitForExit(5000);
+	    if (!_process.HasExited)
+	      _process.Kill();
+	  }
 	}
 }
