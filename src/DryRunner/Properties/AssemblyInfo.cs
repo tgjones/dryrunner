@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("DryRunner")]
-[assembly: AssemblyDescription("Isolated ingration testing for ASP.NET")]
+[assembly: AssemblyDescription("Isolated integration testing for ASP.NET")]
 [assembly: AssemblyConfiguration("Retail")]
 [assembly: AssemblyCompany("Tim Jones")]
 [assembly: AssemblyProduct("DryRunner")]
