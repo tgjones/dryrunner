@@ -8,26 +8,27 @@ namespace DryRunner
 		private readonly TestSiteDeployer _deployer;
 		private readonly TestSiteServer _server;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TestSiteManager" /> class.
-    /// </summary>
-    /// <param name="projectName">Name of the project, that is, the name of the <c>.csproj</c> for the web project without the file extension.</param>
-    /// <param name="port">The port to use for the ISS Express instance.</param>
-    /// <param name="applicationPath">The application path, defaults to the server root <c>"/"</c>.</param>
-	  public TestSiteManager (string projectName, int port = 8888, string applicationPath = "/")
-		{
-      if (applicationPath == null || !applicationPath.StartsWith("/"))
-        throw new ArgumentException("Application path must start with '/'.","applicationPath");
+	    /// <summary>
+	    /// Initializes a new instance of the <see cref="TestSiteManager" /> class.
+	    /// </summary>
+	    /// <param name="projectName">Name of the project, that is, the name of the <c>.csproj</c> for the web project without the file extension.</param>
+	    /// <param name="port">The port to use for the ISS Express instance.</param>
+	    /// <param name="applicationPath">The application path, defaults to the server root <c>"/"</c>.</param>
+	    /// <param name="showIisExpressWindow">True to make the IIS Express command-line window visible, otherwise false.</param>
+	    public TestSiteManager(string projectName, int port = 8888, string applicationPath = "/", bool showIisExpressWindow = true)
+	    {
+	        if (applicationPath == null || !applicationPath.StartsWith("/"))
+	            throw new ArgumentException("Application path must start with '/'.", "applicationPath");
 
-			string siteRoot = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
-			if (!Directory.Exists(siteRoot))
-				throw new Exception("A project with name '" + projectName + "' could not be found.");
+	        string siteRoot = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
+	        if (!Directory.Exists(siteRoot))
+	            throw new Exception("A project with name '" + projectName + "' could not be found.");
 
-      _deployer = new TestSiteDeployer(siteRoot, projectName);
-      _server = new TestSiteServer(_deployer.TestSitePath, port, applicationPath);
-		}
+	        _deployer = new TestSiteDeployer(siteRoot, projectName);
+            _server = new TestSiteServer(_deployer.TestSitePath, port, applicationPath, showIisExpressWindow);
+	    }
 
-		public void Start()
+	    public void Start()
 		{
 			_deployer.Deploy();
 			_server.Start();
