@@ -47,6 +47,7 @@
     <Compile Include="RecordingEventRedirector.cs" />
     <Compile Include="TestSiteDeployer.cs" />
     <Compile Include="TestSiteManager.cs" />
+    <Compile Include="TestSiteOptions.cs" />
     <Compile Include="TestSiteServer.cs" />
   </ItemGroup>
   <ItemGroup>

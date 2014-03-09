@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using NUnit.Framework;
 
 namespace DryRunner.Tests
@@ -17,14 +16,31 @@ namespace DryRunner.Tests
         [Test]
         public void CanDeploySiteWithHiddenIisExpressWindow()
         {
-            var manager = new TestSiteManager("DryRunner.TestWebsite", showIisExpressWindow: false);
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
+            {
+                ShowIisExpressWindow = false
+            });
+            CheckSite(manager, "http://localhost:8888");
+        }
+
+        [Test]
+        public void CanDeploySiteWithExplicitProjectFileName()
+        {
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
+            {
+                ProjectFileName = "DryRunner.TestWebsite.csproj"
+            });
             CheckSite(manager, "http://localhost:8888");
         }
 
         [Test]
         public void CanDeploySite_CustomPortAndApplicationPath()
         {
-            var manager = new TestSiteManager("DryRunner.TestWebsite", port: 9000, applicationPath: "/blub");
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
+            {
+                Port = 9000,
+                ApplicationPath = "/blub"
+            });
             CheckSite(manager, "http://localhost:9000/blub");
         }
 
