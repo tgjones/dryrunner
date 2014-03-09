@@ -33,9 +33,11 @@ Usage
 ```csharp
 // You'd normally want to do this in a test fixture setup.
 string websiteProjectName = "DryRunner.TestWebsite";
-int port = 9000; // Any port that won't conflict with other services running on your computer.
-string applicationPath = "/blub"; // Application path (optional; default is the server root "/").
-TestSiteManager testSiteManager = new TestSiteManager(websiteProjectName, port, applicationPath);
+TestSiteManager testSiteManager = new TestSiteManager(websiteProjectName, new TestSiteOptions
+{
+	Port = 9000, // Any port that won't conflict with other services running on your computer (optional; default is 8888).
+	ApplicationPath = "/blub" // Application path (optional; default is the server root "/").
+});
 testSiteManager.Start();
 
 // Run your tests and point them to: http://localhost:9000/blub
@@ -44,7 +46,15 @@ testSiteManager.Start();
 testSiteManager.Stop();
 ```
 
+If you don't need to customise the port or application path, you can just do:
+
+```csharp
+string websiteProjectName = "DryRunner.TestWebsite";
+TestSiteManager testSiteManager = new TestSiteManager(websiteProjectName);
+testSiteManager.Start();
+```
+
 License
 -------
 
-DryRunner  is released under the [MIT License](http://www.opensource.org/licenses/MIT).
+DryRunner is released under the [MIT License](http://www.opensource.org/licenses/MIT).
