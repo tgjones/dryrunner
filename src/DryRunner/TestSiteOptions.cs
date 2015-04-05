@@ -9,6 +9,18 @@ namespace DryRunner
         public string ProjectFileName { get; set; }
 
         /// <summary>
+        /// The path to the solution file.
+        /// This is use to set the ProjectDir property so that it can be used in MSBuild macros.
+        /// </summary>
+        public string SolutionDir { get; set; }
+
+        /// <summary>
+        /// The path to the project.  
+        /// This is use to set the ProjectDir property so that it can be used in MSBuild macros.
+        /// </summary>
+        public string ProjectDir { get; set; }
+
+        /// <summary>
         /// Port to use for the IIS Express instance. Defaults to 8888.
         /// </summary>
         public int Port { get; set; }

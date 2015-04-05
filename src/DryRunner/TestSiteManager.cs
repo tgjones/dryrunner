@@ -23,11 +23,11 @@ namespace DryRunner
             if (options.ApplicationPath == null || !options.ApplicationPath.StartsWith("/"))
 	            throw new ArgumentException("Application path must start with '/'.", "options");
 
-	        string siteRoot = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
+            string siteRoot = (!string.IsNullOrWhiteSpace(options.ProjectDir)) ? options.ProjectDir : GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
 	        if (!Directory.Exists(siteRoot))
 	            throw new Exception("A project with name '" + projectName + "' could not be found.");
 
-	        _deployer = new TestSiteDeployer(siteRoot, options.ProjectFileName ?? projectName + ".csproj");
+	        _deployer = new TestSiteDeployer(siteRoot, options.ProjectFileName ?? projectName + ".csproj", options.SolutionDir, options.ProjectDir);
             _server = new TestSiteServer(_deployer.TestSitePath, 
                 options.Port, options.ApplicationPath, 
                 options.ShowIisExpressWindow);
