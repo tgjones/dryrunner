@@ -13,18 +13,20 @@ namespace DryRunner
 		private readonly string _projectFileName;
         private readonly string _solutionDir;
         private readonly string _projectDir;
+        private readonly string[] _targets;
 
 		public string TestSitePath
 		{
 			get { return Path.Combine(_siteRoot, @"obj\Test\Package\PackageTmp"); }
 		}
 
-		public TestSiteDeployer(string siteRoot, string projectFileName, string solutionDir, string projectDir)
+		public TestSiteDeployer(string siteRoot, string projectFileName, string solutionDir, string projectDir, string[] targets)
 		{
 			_siteRoot = siteRoot;
             _projectFileName = projectFileName;
             _solutionDir = solutionDir;
             _projectDir = projectDir;
+            _targets = targets;
 		}
 
 	    public void Deploy()
@@ -70,7 +72,7 @@ namespace DryRunner
 	        var globalProperties = new Dictionary<string, string> { 
                 { "Configuration", "Test" }
             };
-
+            
             if (!string.IsNullOrWhiteSpace(_solutionDir))
                 globalProperties.Add("SolutionDir", _solutionDir);
 
@@ -78,7 +80,7 @@ namespace DryRunner
                 globalProperties.Add("ProjectDir", _projectDir);
 
 	        var requestData = new BuildRequestData(
-                projectFilePath, globalProperties, null, new[] { "Clean", "Package" },
+                projectFilePath, globalProperties, null, _targets,
 	            null);
 
 	        return BuildManager.DefaultBuildManager.Build(parameters, requestData);
