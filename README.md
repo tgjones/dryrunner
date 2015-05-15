@@ -53,6 +53,7 @@ string websiteProjectName = "DryRunner.TestWebsite";
 TestSiteManager testSiteManager = new TestSiteManager(websiteProjectName);
 testSiteManager.Start();
 ```
+Additionally, if you are using MSBuild macros in your web application project, you can utilize additional parameters to configure the $(SolutionDir) and $(ProjectDir).  Just add the paths to your **TestSiteOptions** object using the *SolutionDir* and *ProjectDir*, respectively.
 
 License
 -------

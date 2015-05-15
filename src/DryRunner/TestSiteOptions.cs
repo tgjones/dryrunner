@@ -2,11 +2,34 @@ namespace DryRunner
 {
     public class TestSiteOptions
     {
+        private string[] _targets = new[] { "Clean", "Package" };
+
         /// <summary>
         /// Filename of the website project you want to test, including the extension (i.e. .csproj, .vbproj).
         /// This is optional - if not set, it will default to {ProjectName}.csproj.
         /// </summary>
         public string ProjectFileName { get; set; }
+
+        /// <summary>
+        /// The path to the solution file.
+        /// This is use to set the ProjectDir property so that it can be used in MSBuild macros.
+        /// </summary>
+        public string SolutionDir { get; set; }
+
+        /// <summary>
+        /// The path to the project.  
+        /// This is use to set the ProjectDir property so that it can be used in MSBuild macros.
+        /// </summary>
+        public string ProjectDir { get; set; }
+
+        /// <summary>
+        /// Supply additional targets in the MSBuild configuration
+        /// </summary>
+        public string[] Targets
+        {
+            get { return _targets; }
+            set { _targets = value; }
+        }
 
         /// <summary>
         /// Port to use for the IIS Express instance. Defaults to 8888.
