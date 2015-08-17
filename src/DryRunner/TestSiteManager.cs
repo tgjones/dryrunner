@@ -30,7 +30,7 @@ namespace DryRunner
 	        _deployer = new TestSiteDeployer(siteRoot, options.ProjectFileName ?? projectName + ".csproj", options.SolutionDir, options.ProjectDir, options.Targets);
             _server = new TestSiteServer(_deployer.TestSitePath, 
                 options.Port, options.ApplicationPath, 
-                options.ShowIisExpressWindow);
+                options.ShowIisExpressWindow, options.EnableWindowsAuthentication);
 	    }
 
 	    public void Start()

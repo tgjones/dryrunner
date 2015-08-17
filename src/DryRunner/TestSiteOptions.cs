@@ -47,6 +47,11 @@ namespace DryRunner
         /// </summary>
         public bool ShowIisExpressWindow { get; set; }
 
+        /// <summary>
+        /// Enables Windows Authentication for IIS Express.
+        /// </summary>
+        public bool EnableWindowsAuthentication { get; set; }
+
         public TestSiteOptions()
         {
             Port = 8888;
