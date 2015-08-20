@@ -11,16 +11,18 @@ namespace DryRunner
         private readonly int _port;
         private readonly string _applicationPath;
 	    private readonly bool _showIisExpressWindow;
+	    private readonly bool _enableWindowsAuthentication;
 
 	    private Process _process;
 		private ManualResetEventSlim _manualResetEvent;
 
-	    public TestSiteServer(string physicalSitePath, int port, string applicationPath, bool showIisExpressWindow)
+	    public TestSiteServer(string physicalSitePath, int port, string applicationPath, bool showIisExpressWindow, bool enableWindowsAuthentication)
 	    {
 	        _physicalSitePath = physicalSitePath;
 	        _port = port;
 	        _applicationPath = applicationPath;
 	        _showIisExpressWindow = showIisExpressWindow;
+	        _enableWindowsAuthentication = enableWindowsAuthentication;
 	    }
 
 	    public void Start()
@@ -76,9 +78,10 @@ namespace DryRunner
 	    {
 	        var applicationHostConfig = new StringBuilder(GetApplicationHostConfigTemplate());
 	        applicationHostConfig
-	            .Replace("{{PORT}}", _port.ToString())
-	            .Replace("{{PHYSICAL_PATH}}", _physicalSitePath)
-	            .Replace("{{APPLICATION_PATH}}", _applicationPath);
+	            .Replace ("{{PORT}}", _port.ToString())
+	            .Replace ("{{PHYSICAL_PATH}}", _physicalSitePath)
+	            .Replace ("{{APPLICATION_PATH}}", _applicationPath)
+	            .Replace ("{{WINDOWS_AUTHENTICATION_ENABLED}}", _enableWindowsAuthentication ? "true" : "false");
 
 	        // There must always be a default application. So if we do not deploy to "/" we uncomment our dummy default application.
 	        // This default application gets served from a new directory created inside the physical path of our site (to avoid access rights issues).

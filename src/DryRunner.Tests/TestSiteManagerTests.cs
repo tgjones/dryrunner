@@ -34,6 +34,16 @@ namespace DryRunner.Tests
         }
 
         [Test]
+        public void CanDeploySiteWithEnableWindowsAuthentication()
+        {
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
+            {
+                EnableWindowsAuthentication = true
+            });
+            CheckSite(manager, "http://localhost:8888");
+        }
+
+        [Test]
         public void CanDeploySite_CustomPortAndApplicationPath()
         {
             var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
