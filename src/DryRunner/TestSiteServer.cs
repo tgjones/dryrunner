@@ -32,7 +32,7 @@ namespace DryRunner
 			var thread = new Thread(StartIisExpress) { IsBackground = true };
 			thread.Start();
 
-			_manualResetEvent.Wait(5000);
+			_manualResetEvent.Wait(15000);
 			_manualResetEvent.Dispose();
 		}
 
