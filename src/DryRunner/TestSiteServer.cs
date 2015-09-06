@@ -49,17 +49,11 @@ namespace DryRunner
 			var startInfo = new ProcessStartInfo
 			{
 				WindowStyle = ProcessWindowStyle.Minimized,
-				ErrorDialog = true,
-				LoadUserProfile = true,
                 CreateNoWindow = !_showIisExpressWindow,
-				UseShellExecute = false,
                 Arguments = string.Format("/config:\"{0}\" /systray:true", applicationHostPath)
 			};
 
-			var programfiles = string.IsNullOrEmpty(startInfo.EnvironmentVariables["ProgramFiles(x86)"])
-				? startInfo.EnvironmentVariables["ProgramFiles"]
-				: startInfo.EnvironmentVariables["ProgramFiles(x86)"];
-
+			var programfiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 			startInfo.FileName = programfiles + "\\IIS Express\\iisexpress.exe";
 
 			try
@@ -70,8 +64,9 @@ namespace DryRunner
 				_manualResetEvent.Set();
 				_process.WaitForExit();
 			}
-			catch
+			catch (Exception ex)
 			{
+                Console.WriteLine("Error starting IIS Express: " +  ex);
 				_process.CloseMainWindow();
 				_process.Dispose();
 			}
