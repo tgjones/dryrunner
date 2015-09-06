@@ -2,6 +2,11 @@ version: 1.0.{build}
 skip_tags: false
 configuration: Release
 
+install:
+- set IIS_USER_HOME=%USERPROFILE%\Documents\IISExpress
+- md %IIS_USER_HOME%\Logs
+- md %IIS_USER_HOME%\TraceLogFiles
+
 init:
 - ps: >-
     $parsedReleaseBuildVersion = $env:APPVEYOR_REPO_TAG_NAME -Match "(\d+.\d+.\d+(.\d+)?)"
