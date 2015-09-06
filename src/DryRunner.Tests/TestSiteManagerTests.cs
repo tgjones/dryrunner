@@ -6,7 +6,7 @@ namespace DryRunner.Tests
     [TestFixture]
     public class TestSiteManagerTests
     {
-        //[Test]
+        [Test]
         public void CanDeploySite()
         {
             var manager = new TestSiteManager("DryRunner.TestWebsite");

@@ -6,6 +6,8 @@ install:
 - set IIS_USER_HOME=%USERPROFILE%\Documents\IISExpress
 - md %IIS_USER_HOME%\Logs
 - md %IIS_USER_HOME%\TraceLogFiles
+- netsh firewall add portopening TCP 8888 "Open Port 8888"
+- netsh firewall add portopening TCP 9000 "Open Port 9000"
 
 init:
 - ps: >-
