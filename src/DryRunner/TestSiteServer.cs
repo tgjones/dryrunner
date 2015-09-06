@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -32,7 +33,9 @@ namespace DryRunner
 			var thread = new Thread(StartIisExpress) { IsBackground = true };
 			thread.Start();
 
-			_manualResetEvent.Wait(15000);
+			if (!_manualResetEvent.Wait(15000))
+                throw new Exception("Could not start IIS Express");
+
 			_manualResetEvent.Dispose();
 		}
 
