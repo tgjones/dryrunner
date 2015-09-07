@@ -2,13 +2,6 @@ version: 1.0.{build}
 skip_tags: false
 configuration: Release
 
-install:
-- set IIS_USER_HOME=%USERPROFILE%\Documents\IISExpress
-- md %IIS_USER_HOME%\Logs
-- md %IIS_USER_HOME%\TraceLogFiles
-- netsh firewall add portopening TCP 8888 "Open Port 8888"
-- netsh firewall add portopening TCP 9000 "Open Port 9000"
-
 init:
 - ps: >-
     $parsedReleaseBuildVersion = $env:APPVEYOR_REPO_TAG_NAME -Match "(\d+.\d+.\d+(.\d+)?)"
@@ -41,6 +34,9 @@ build:
   publish_nuget: true
   publish_nuget_symbols: true
   verbosity: minimal
+  
+# Disable tests on AppVeyor because of problem connecting to IIS Express
+test: off
   
 artifacts:
 - path: 'src/DryRunner/bin/$(configuration)'
