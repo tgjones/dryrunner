@@ -46,7 +46,7 @@ deploy:
 - provider: GitHub
   auth_token:
     secure: gd108UlSNyLViffYS7AKRgbTQXmzI6N/WgtNXFwkOsO9qGrWrAaJ853qAyv+FXp6
-  artifact: 'src/DryRunner/bin/$(configuration)'
+  artifact: 'src/DryRunner/bin/DryRunner.zip'
   draft: false
   prerelease: false
   on:
