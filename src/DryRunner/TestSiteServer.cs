@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -104,15 +105,22 @@ namespace DryRunner
 	            return reader.ReadToEnd();
 	    }
 
-	    public void Stop()
-	    {
-	        if (_process == null)
-	            return;
+      public void Stop()
+      {
+        if (_process == null)
+          return;
 
-	        _process.CloseMainWindow();
-	        _process.WaitForExit(5000);
-	        if (!_process.HasExited)
-	            _process.Kill();
-	    }
+        PostMessage(new HandleRef(_process, _process.MainWindowHandle), WM_KEYDOWN, VK_Q, IntPtr.Zero);
+        _process.WaitForExit(5000);
+        if (!_process.HasExited)
+          _process.Kill();
+      }
+
+      private const int WM_KEYDOWN = 0x100;
+      private static readonly IntPtr VK_Q = new IntPtr(0x51);
+
+      [return: MarshalAs(UnmanagedType.Bool)]
+      [DllImport("user32.dll")]
+      static extern bool PostMessage(HandleRef hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 	}
 }
