@@ -14,19 +14,21 @@ namespace DryRunner
         private readonly string _solutionDir;
         private readonly string _projectDir;
         private readonly string[] _targets;
+        private readonly string _configuration;
 
         public string TestSitePath
         {
-            get { return Path.Combine(_siteRoot, @"obj\Test\Package\PackageTmp"); }
+            get { return Path.Combine(_siteRoot, @"obj\" + _configuration + @"\Package\PackageTmp"); }
         }
 
-        public TestSiteDeployer(string siteRoot, string projectFileName, string solutionDir, string projectDir, string[] targets)
+        public TestSiteDeployer(string siteRoot, string projectFileName, string solutionDir, string projectDir, string[] targets, string configuration)
         {
             _siteRoot = siteRoot;
             _projectFileName = projectFileName;
             _solutionDir = solutionDir;
             _projectDir = projectDir;
             _targets = targets;
+            _configuration = configuration;
         }
 
         public void Deploy()
@@ -52,7 +54,7 @@ namespace DryRunner
 
             if (result.OverallResult != BuildResultCode.Success || !Directory.Exists(TestSitePath))
             {
-                var message = "Build failed! See property BuildOutput ensure that you have a Test build configuration."
+                var message = "Build failed! See property BuildOutput ensure that you have a " + _configuration + " build configuration."
                       + Environment.NewLine + Environment.NewLine
                       + errorsOnlyRecorder.GetJoinedBuildMessages();
                 var buildOuput = normalRecorder.GetJoinedBuildMessages();
@@ -65,12 +67,12 @@ namespace DryRunner
             // 1) Clean previous deployment.
             // 2) Do a build of the website project with the "Package" target. This will copy all
             //    the necessary website files into a directory similar to the following:
-            //    MyProject/obj/Test/Package/PackageTmp
+            //    MyProject/obj/{Configuration}/Package/PackageTmp
 
             var parameters = new BuildParameters { Loggers = loggers };
             var projectFilePath = Path.Combine(_siteRoot, _projectFileName);
             var globalProperties = new Dictionary<string, string> { 
-                { "Configuration", "Test" }
+                { "Configuration", _configuration }
             };
 
             if (!string.IsNullOrWhiteSpace(_solutionDir))

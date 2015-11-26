@@ -32,6 +32,11 @@ namespace DryRunner
         }
 
         /// <summary>
+        /// Build configuration to use.
+        /// </summary>
+        public string Configuration { get; set; }
+
+        /// <summary>
         /// Port to use for the IIS Express instance. Defaults to 8888.
         /// </summary>
         public int Port { get; set; }
@@ -57,6 +62,7 @@ namespace DryRunner
             Port = 8888;
             ApplicationPath = "/";
             ShowIisExpressWindow = true;
+            Configuration = "Test";
         }
     }
 }
