@@ -15,13 +15,14 @@ namespace DryRunner
         private readonly string _projectDir;
         private readonly string[] _targets;
         private readonly string _configuration;
+        private readonly string _transformConfiguration;
 
         public string TestSitePath
         {
             get { return Path.Combine(_siteRoot, @"obj\" + _configuration + @"\Package\PackageTmp"); }
         }
 
-        public TestSiteDeployer(string siteRoot, string projectFileName, string solutionDir, string projectDir, string[] targets, string configuration)
+        public TestSiteDeployer(string siteRoot, string projectFileName, string solutionDir, string projectDir, string[] targets, string configuration, string transformConfiguration)
         {
             _siteRoot = siteRoot;
             _projectFileName = projectFileName;
@@ -29,6 +30,7 @@ namespace DryRunner
             _projectDir = projectDir;
             _targets = targets;
             _configuration = configuration;
+            _transformConfiguration = transformConfiguration;
         }
 
         public void Deploy()
@@ -81,9 +83,10 @@ namespace DryRunner
             if (!string.IsNullOrWhiteSpace(_projectDir))
                 globalProperties.Add("ProjectDir", _projectDir);
 
-            var requestData = new BuildRequestData(
-                  projectFilePath, globalProperties, null, _targets,
-                null);
+            if (!string.IsNullOrWhiteSpace(_transformConfiguration))
+                globalProperties.Add("ProjectConfigTransformFileName", "Web." + _transformConfiguration + ".config");
+
+            var requestData = new BuildRequestData(projectFilePath, globalProperties, null, _targets, null);
 
             return BuildManager.DefaultBuildManager.Build(parameters, requestData);
         }

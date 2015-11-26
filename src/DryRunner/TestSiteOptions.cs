@@ -37,6 +37,11 @@ namespace DryRunner
         public string Configuration { get; set; }
 
         /// <summary>
+        /// Configuration to use for the configuration file transformation (e.g. Test means that Web.Test.config is used).
+        /// </summary>
+        public string TransformationConfiguration { get; set; }
+
+        /// <summary>
         /// Port to use for the IIS Express instance. Defaults to 8888.
         /// </summary>
         public int Port { get; set; }

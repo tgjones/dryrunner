@@ -36,7 +36,8 @@ namespace DryRunner
                     options.SolutionDir,
                     options.ProjectDir,
                     options.Targets,
-                    options.Configuration);
+                    options.Configuration,
+                    options.TransformationConfiguration);
 
             _server = new TestSiteServer(_deployer.TestSitePath,
                 options.Port, options.ApplicationPath,
