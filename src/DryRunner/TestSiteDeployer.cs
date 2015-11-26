@@ -7,33 +7,33 @@ using Microsoft.Build.Logging;
 
 namespace DryRunner
 {
-	public class TestSiteDeployer
-	{
-		private readonly string _siteRoot;
-		private readonly string _projectFileName;
+    public class TestSiteDeployer
+    {
+        private readonly string _siteRoot;
+        private readonly string _projectFileName;
         private readonly string _solutionDir;
         private readonly string _projectDir;
         private readonly string[] _targets;
 
-		public string TestSitePath
-		{
-			get { return Path.Combine(_siteRoot, @"obj\Test\Package\PackageTmp"); }
-		}
+        public string TestSitePath
+        {
+            get { return Path.Combine(_siteRoot, @"obj\Test\Package\PackageTmp"); }
+        }
 
-		public TestSiteDeployer(string siteRoot, string projectFileName, string solutionDir, string projectDir, string[] targets)
-		{
-			_siteRoot = siteRoot;
+        public TestSiteDeployer(string siteRoot, string projectFileName, string solutionDir, string projectDir, string[] targets)
+        {
+            _siteRoot = siteRoot;
             _projectFileName = projectFileName;
             _solutionDir = solutionDir;
             _projectDir = projectDir;
             _targets = targets;
-		}
+        }
 
-	    public void Deploy()
-	    {
-	        var errorsOnlyRecorder = new RecordingEventRedirector();
-	        var normalRecorder = new RecordingEventRedirector();
-	        var loggers = new ILogger[]
+        public void Deploy()
+        {
+            var errorsOnlyRecorder = new RecordingEventRedirector();
+            var normalRecorder = new RecordingEventRedirector();
+            var loggers = new ILogger[]
 	        {
 	            new ConsoleLogger(LoggerVerbosity.Quiet),
 	            new ConfigurableForwardingLogger
@@ -48,42 +48,42 @@ namespace DryRunner
 	            }
 	        };
 
-	        var result = Build(loggers);
+            var result = Build(loggers);
 
-	        if (result.OverallResult != BuildResultCode.Success || !Directory.Exists(TestSitePath))
-	        {
-	            var message = "Build failed! See property BuildOutput ensure that you have a Test build configuration."
-                    + Environment.NewLine + Environment.NewLine
-                    + errorsOnlyRecorder.GetJoinedBuildMessages();
-	            var buildOuput = normalRecorder.GetJoinedBuildMessages();
-	            throw new BuildFailedException(message, buildOuput);
-	        }
-	    }
+            if (result.OverallResult != BuildResultCode.Success || !Directory.Exists(TestSitePath))
+            {
+                var message = "Build failed! See property BuildOutput ensure that you have a Test build configuration."
+                      + Environment.NewLine + Environment.NewLine
+                      + errorsOnlyRecorder.GetJoinedBuildMessages();
+                var buildOuput = normalRecorder.GetJoinedBuildMessages();
+                throw new BuildFailedException(message, buildOuput);
+            }
+        }
 
-	    private BuildResult Build(IEnumerable<ILogger> loggers)
-	    {
-	        // 1) Clean previous deployment.
-	        // 2) Do a build of the website project with the "Package" target. This will copy all
-	        //    the necessary website files into a directory similar to the following:
-	        //    MyProject/obj/Test/Package/PackageTmp
+        private BuildResult Build(IEnumerable<ILogger> loggers)
+        {
+            // 1) Clean previous deployment.
+            // 2) Do a build of the website project with the "Package" target. This will copy all
+            //    the necessary website files into a directory similar to the following:
+            //    MyProject/obj/Test/Package/PackageTmp
 
-	        var parameters = new BuildParameters { Loggers = loggers };
-	        var projectFilePath = Path.Combine(_siteRoot, _projectFileName);
-	        var globalProperties = new Dictionary<string, string> { 
+            var parameters = new BuildParameters { Loggers = loggers };
+            var projectFilePath = Path.Combine(_siteRoot, _projectFileName);
+            var globalProperties = new Dictionary<string, string> { 
                 { "Configuration", "Test" }
             };
-            
+
             if (!string.IsNullOrWhiteSpace(_solutionDir))
                 globalProperties.Add("SolutionDir", _solutionDir);
 
             if (!string.IsNullOrWhiteSpace(_projectDir))
                 globalProperties.Add("ProjectDir", _projectDir);
 
-	        var requestData = new BuildRequestData(
-                projectFilePath, globalProperties, null, _targets,
-	            null);
+            var requestData = new BuildRequestData(
+                  projectFilePath, globalProperties, null, _targets,
+                null);
 
-	        return BuildManager.DefaultBuildManager.Build(parameters, requestData);
-	    }
-	}
+            return BuildManager.DefaultBuildManager.Build(parameters, requestData);
+        }
+    }
 }
