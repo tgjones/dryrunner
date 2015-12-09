@@ -30,14 +30,18 @@ namespace DryRunner
             if (!Directory.Exists(siteRoot))
                 throw new Exception("A project with name '" + projectName + "' could not be found.");
 
+            if (options.ProjectFileName == null)
+                options.ProjectFileName = projectName + ".csproj";
+
             _deployer = new TestSiteDeployer (
                     siteRoot,
-                    options.ProjectFileName ?? projectName + ".csproj",
-                    options.SolutionDir,
-                    options.ProjectDir,
-                    options.Targets,
-                    options.Configuration,
-                    options.TransformationConfiguration);
+                    options);
+                    //options.ProjectFileName ?? projectName + ".csproj",
+                    //options.SolutionDir,
+                    //options.ProjectDir,
+                    //options.Targets,
+                    //options.Configuration,
+                    //options.TransformationConfiguration);
 
             _server = new TestSiteServer(_deployer.TestSitePath,
                 options.Port, options.ApplicationPath,

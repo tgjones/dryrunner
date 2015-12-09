@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace DryRunner
 {
     public class TestSiteOptions
@@ -40,6 +42,8 @@ namespace DryRunner
         /// Configuration to use for the configuration file transformation (e.g. Test means that Web.Test.config is used).
         /// </summary>
         public string TransformationConfiguration { get; set; }
+
+        public Dictionary<string, string> Properties { get; set; }
 
         /// <summary>
         /// Port to use for the IIS Express instance. Defaults to 8888.

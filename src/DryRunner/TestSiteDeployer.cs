@@ -10,27 +10,17 @@ namespace DryRunner
     public class TestSiteDeployer
     {
         private readonly string _siteRoot;
-        private readonly string _projectFileName;
-        private readonly string _solutionDir;
-        private readonly string _projectDir;
-        private readonly string[] _targets;
-        private readonly string _configuration;
-        private readonly string _transformConfiguration;
+        private readonly TestSiteOptions _options;
 
         public string TestSitePath
         {
-            get { return Path.Combine(_siteRoot, @"obj\" + _configuration + @"\Package\PackageTmp"); }
+            get { return Path.Combine(_siteRoot, @"obj\" + _options.Configuration + @"\Package\PackageTmp"); }
         }
 
-        public TestSiteDeployer(string siteRoot, string projectFileName, string solutionDir, string projectDir, string[] targets, string configuration, string transformConfiguration)
+        public TestSiteDeployer (string siteRoot, TestSiteOptions options)
         {
             _siteRoot = siteRoot;
-            _projectFileName = projectFileName;
-            _solutionDir = solutionDir;
-            _projectDir = projectDir;
-            _targets = targets;
-            _configuration = configuration;
-            _transformConfiguration = transformConfiguration;
+            _options = options;
         }
 
         public void Deploy()
@@ -56,7 +46,7 @@ namespace DryRunner
 
             if (result.OverallResult != BuildResultCode.Success || !Directory.Exists(TestSitePath))
             {
-                var message = "Build failed! See property BuildOutput ensure that you have a " + _configuration + " build configuration."
+                var message = "Build failed! See property BuildOutput ensure that you have a " + _options.Configuration + " build configuration."
                       + Environment.NewLine + Environment.NewLine
                       + errorsOnlyRecorder.GetJoinedBuildMessages();
                 var buildOuput = normalRecorder.GetJoinedBuildMessages();
@@ -72,21 +62,25 @@ namespace DryRunner
             //    MyProject/obj/{Configuration}/Package/PackageTmp
 
             var parameters = new BuildParameters { Loggers = loggers };
-            var projectFilePath = Path.Combine(_siteRoot, _projectFileName);
-            var globalProperties = new Dictionary<string, string> { 
-                { "Configuration", _configuration }
-            };
+            var projectFilePath = Path.Combine(_siteRoot, _options.ProjectFileName);
+            var globalProperties = new Dictionary<string, string>();
 
-            if (!string.IsNullOrWhiteSpace(_solutionDir))
-                globalProperties.Add("SolutionDir", _solutionDir);
+            globalProperties.Add("Configuration", string.IsNullOrEmpty(_options.Configuration) ? "Test" : _options.Configuration);
 
-            if (!string.IsNullOrWhiteSpace(_projectDir))
-                globalProperties.Add("ProjectDir", _projectDir);
+            if (!string.IsNullOrWhiteSpace(_options.SolutionDir))
+                globalProperties.Add("SolutionDir", _options.SolutionDir);
 
-            if (!string.IsNullOrWhiteSpace(_transformConfiguration))
-                globalProperties.Add("ProjectConfigTransformFileName", "Web." + _transformConfiguration + ".config");
+            if (!string.IsNullOrWhiteSpace(_options.ProjectDir))
+                globalProperties.Add("ProjectDir", _options.ProjectDir);
 
-            var requestData = new BuildRequestData(projectFilePath, globalProperties, null, _targets, null);
+            if (!string.IsNullOrWhiteSpace(_options.TransformationConfiguration))
+                globalProperties.Add("ProjectConfigTransformFileName", "Web." + _options.TransformationConfiguration + ".config");
+
+            if(_options.Properties != null)
+                foreach (var property in _options.Properties)
+                    globalProperties.Add (property.Key, property.Value);
+
+            var requestData = new BuildRequestData (projectFilePath, globalProperties, null, _options.Targets, null);
 
             return BuildManager.DefaultBuildManager.Build(parameters, requestData);
         }
