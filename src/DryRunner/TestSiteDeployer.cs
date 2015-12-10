@@ -17,7 +17,7 @@ namespace DryRunner
             get { return Path.Combine(_siteRoot, @"obj\" + _options.Configuration + @"\Package\PackageTmp"); }
         }
 
-        public TestSiteDeployer (string siteRoot, TestSiteOptions options)
+        public TestSiteDeployer(string siteRoot, TestSiteOptions options)
         {
             _siteRoot = siteRoot;
             _options = options;
@@ -76,11 +76,11 @@ namespace DryRunner
             if (!string.IsNullOrWhiteSpace(_options.TransformationConfiguration))
                 globalProperties.Add("ProjectConfigTransformFileName", "Web." + _options.TransformationConfiguration + ".config");
 
-            if(_options.Properties != null)
+            if (_options.Properties != null)
                 foreach (var property in _options.Properties)
-                    globalProperties.Add (property.Key, property.Value);
+                    globalProperties.Add(property.Key, property.Value);
 
-            var requestData = new BuildRequestData (projectFilePath, globalProperties, null, _options.Targets, null);
+            var requestData = new BuildRequestData(projectFilePath, globalProperties, null, _options.Targets, null);
 
             return BuildManager.DefaultBuildManager.Build(parameters, requestData);
         }

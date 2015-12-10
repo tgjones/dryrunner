@@ -23,8 +23,8 @@ namespace DryRunner
             if (options.ApplicationPath == null || !options.ApplicationPath.StartsWith("/"))
                 throw new ArgumentException("Application path must start with '/'.", "options");
 
-            if (string.IsNullOrWhiteSpace (options.Configuration))
-                throw new ArgumentException ("Build configuration cannot be null or empty.", "options");
+            if (string.IsNullOrWhiteSpace(options.Configuration))
+                throw new ArgumentException("Build configuration cannot be null or empty.", "options");
 
             string siteRoot = (!string.IsNullOrWhiteSpace(options.ProjectDir)) ? options.ProjectDir : GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
             if (!Directory.Exists(siteRoot))
@@ -33,15 +33,7 @@ namespace DryRunner
             if (options.ProjectFileName == null)
                 options.ProjectFileName = projectName + ".csproj";
 
-            _deployer = new TestSiteDeployer (
-                    siteRoot,
-                    options);
-                    //options.ProjectFileName ?? projectName + ".csproj",
-                    //options.SolutionDir,
-                    //options.ProjectDir,
-                    //options.Targets,
-                    //options.Configuration,
-                    //options.TransformationConfiguration);
+            _deployer = new TestSiteDeployer(siteRoot, options);
 
             _server = new TestSiteServer(_deployer.TestSitePath,
                 options.Port, options.ApplicationPath,
