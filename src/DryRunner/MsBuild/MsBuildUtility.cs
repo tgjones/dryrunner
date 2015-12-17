@@ -48,7 +48,7 @@ namespace DryRunner.MsBuild
             if (!string.IsNullOrWhiteSpace(options.SolutionDir))
                 properties.Add("SolutionDir", options.SolutionDir);
 
-            if (!string.IsNullOrWhiteSpace(options.ProjectDir))
+            if (!string.IsNullOrWhiteSpace(options.ProjectDir) && options.ProjectDirSetByUser)
                 properties.Add("ProjectDir", options.ProjectDir);
 
             if (!string.IsNullOrWhiteSpace(options.TransformationConfiguration))

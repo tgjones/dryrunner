@@ -31,6 +31,8 @@ namespace DryRunner.Options
         /// </summary>
         public string ProjectDir { get; set; }
 
+        internal bool ProjectDirSetByUser { get; set; }
+
         /// <summary>
         /// The build targets that are invoked in MSBuild.
         /// Defaults to 'Clean' and 'Package'.
@@ -115,8 +117,10 @@ namespace DryRunner.Options
 
         internal void ApplyDefaultsWhereNecessary (string projectName)
         {
-            if (string.IsNullOrWhiteSpace (ProjectDir))
-                ProjectDir = GetPathRelativeToCurrentAssemblyPath (@"..\..\..\" + projectName);
+            if (string.IsNullOrWhiteSpace(ProjectDir))
+                ProjectDir = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
+            else
+                ProjectDirSetByUser = true;
 
             if (string.IsNullOrWhiteSpace(ProjectFileName))
                 ProjectFileName = projectName + ".csproj";
