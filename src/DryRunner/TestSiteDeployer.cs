@@ -1,88 +1,105 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using Microsoft.Build.Execution;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Logging;
+using System.Linq;
+using DryRunner.Exceptions;
+using DryRunner.Options;
+using DryRunner.Util;
 
 namespace DryRunner
 {
     public class TestSiteDeployer
     {
-        private readonly string _siteRoot;
-        private readonly TestSiteOptions _options;
+        private readonly TestSiteDeployerOptions _options;
 
         public string TestSitePath
         {
-            get { return Path.Combine(_siteRoot, @"obj\" + _options.Configuration + @"\Package\PackageTmp"); }
+            get { return Path.Combine(_options.ProjectDir, @"obj\" + _options.BuildConfiguration + @"\Package\PackageTmp"); }
         }
 
-        public TestSiteDeployer(string siteRoot, TestSiteOptions options)
+        public TestSiteDeployer(TestSiteDeployerOptions options)
         {
-            _siteRoot = siteRoot;
             _options = options;
         }
 
         public void Deploy()
         {
-            var errorsOnlyRecorder = new RecordingEventRedirector();
-            var normalRecorder = new RecordingEventRedirector();
-            var loggers = new ILogger[]
-	        {
-	            new ConsoleLogger(LoggerVerbosity.Quiet),
-	            new ConfigurableForwardingLogger
-	            {
-	                BuildEventRedirector = errorsOnlyRecorder,
-	                Verbosity = LoggerVerbosity.Quiet
-	            },
-	            new ConfigurableForwardingLogger
-	            {
-	                BuildEventRedirector = normalRecorder,
-	                Verbosity = LoggerVerbosity.Normal
-	            }
-	        };
+            var result = Build(_options);
 
-            var result = Build(loggers);
-
-            if (result.OverallResult != BuildResultCode.Success || !Directory.Exists(TestSitePath))
+            if (!result.WasSuccessful|| !Directory.Exists(TestSitePath))
             {
-                var message = "Build failed! See property BuildOutput ensure that you have a " + _options.Configuration + " build configuration."
-                      + Environment.NewLine + Environment.NewLine
-                      + errorsOnlyRecorder.GetJoinedBuildMessages();
-                var buildOuput = normalRecorder.GetJoinedBuildMessages();
-                throw new BuildFailedException(message, buildOuput);
+                var message = "Build failed! See property BuildOutput ensure that you have a " + _options.BuildConfiguration + " build configuration."
+                              + Environment.NewLine + Environment.NewLine
+                              + result.ErrorOutput;
+                throw new BuildFailedException(message, result.Output);
             }
         }
 
-        private BuildResult Build(IEnumerable<ILogger> loggers)
+        private MsBuildResult Build(TestSiteDeployerOptions options)
         {
-            // 1) Clean previous deployment.
-            // 2) Do a build of the website project with the "Package" target. This will copy all
-            //    the necessary website files into a directory similar to the following:
-            //    MyProject/obj/{Configuration}/Package/PackageTmp
+            var projectFilePath = Path.Combine(options.ProjectDir, options.ProjectFileName);
 
-            var parameters = new BuildParameters { Loggers = loggers };
-            var projectFilePath = Path.Combine(_siteRoot, _options.ProjectFileName);
-            var globalProperties = new Dictionary<string, string>();
+            var properties = new Dictionary<string, string>();
+            properties.Add("Configuration", options.BuildConfiguration);
 
-            globalProperties.Add("Configuration", string.IsNullOrEmpty(_options.Configuration) ? "Test" : _options.Configuration);
+            if (!string.IsNullOrWhiteSpace(options.SolutionDir))
+                properties.Add("SolutionDir", options.SolutionDir);
 
-            if (!string.IsNullOrWhiteSpace(_options.SolutionDir))
-                globalProperties.Add("SolutionDir", _options.SolutionDir);
+            if (!string.IsNullOrWhiteSpace(options.ProjectDir) && options.ProjectDirSetByUser)
+                properties.Add("ProjectDir", options.ProjectDir);
 
-            if (!string.IsNullOrWhiteSpace(_options.ProjectDir))
-                globalProperties.Add("ProjectDir", _options.ProjectDir);
+            if (!string.IsNullOrWhiteSpace(options.TransformationConfiguration))
+                properties.Add("ProjectConfigTransformFileName", "Web." + options.TransformationConfiguration + ".config");
 
-            if (!string.IsNullOrWhiteSpace(_options.TransformationConfiguration))
-                globalProperties.Add("ProjectConfigTransformFileName", "Web." + _options.TransformationConfiguration + ".config");
+            if (options.AdditionalBuildProperties != null)
+                foreach (var property in options.AdditionalBuildProperties)
+                    properties.Add(property.Key, property.Value);
 
-            if (_options.Properties != null)
-                foreach (var property in _options.Properties)
-                    globalProperties.Add(property.Key, property.Value);
+            using (TemporaryFile normalLogFile = new TemporaryFile(), errorLogFile = new TemporaryFile())
+            {
+                var path = options.MsBuildExePathResolver(options.MsBuildToolsVersion, options.Use64BitMsBuild);
+                var arguments = string.Format(
+                        "{0} /p:{1} /t:{2} /fl1 /flp1:{3} /fl2 /flp2:{4}",
+                        projectFilePath,
+                        string.Join(";", properties.Select(kvp => kvp.Key + "=" + kvp.Value)),
+                        string.Join(";", options.BuildTargets),
+                        string.Format("LogFile={0};Verbosity=Normal", normalLogFile.Path),
+                        string.Format("LogFile={0};ErrorsOnly", errorLogFile.Path)
+                        );
 
-            var requestData = new BuildRequestData(projectFilePath, globalProperties, null, _options.Targets, null);
+                var process = Process.Start(new ProcessStartInfo(path, arguments) { CreateNoWindow = !options.ShowMsBuildWindow, UseShellExecute = false });
+                Trace.Assert(process != null, "process != null");
+                process.WaitForExit();
 
-            return BuildManager.DefaultBuildManager.Build(parameters, requestData);
+                return process.ExitCode == 0
+                        ? MsBuildResult.Success(normalLogFile.GetContents())
+                        : MsBuildResult.Failure(normalLogFile.GetContents(), errorLogFile.GetContents());
+            }
+        }
+
+        private class MsBuildResult
+        {
+            public bool WasSuccessful { get; private set; }
+            public string ErrorOutput { get; private set; }
+            public string Output { get; private set; }
+
+            private MsBuildResult(bool wasSuccessful, string output, string errorOutput)
+            {
+                WasSuccessful = wasSuccessful;
+                ErrorOutput = errorOutput;
+                Output = output;
+            }
+
+            public static MsBuildResult Success(string output)
+            {
+                return new MsBuildResult(true, output, null);
+            }
+
+            public static MsBuildResult Failure(string output, string errorOutput)
+            {
+                return new MsBuildResult(false, output, errorOutput);
+            }
         }
     }
 }

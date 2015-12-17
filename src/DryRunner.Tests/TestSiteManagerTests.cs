@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using DryRunner.Options;
 using NUnit.Framework;
 
 namespace DryRunner.Tests
@@ -16,10 +17,12 @@ namespace DryRunner.Tests
         [Test]
         public void CanDeploySiteWithHiddenIisExpressWindow()
         {
-            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
-            {
-                ShowIisExpressWindow = false
-            });
+            var manager = new TestSiteManager(
+                    "DryRunner.TestWebsite",
+                    new TestSiteOptions
+                    {
+                        Server = new TestSiteServerOptions { ShowIisExpressWindow = false }
+                    });
             CheckSite(manager, "http://localhost:8888");
         }
 
@@ -28,7 +31,7 @@ namespace DryRunner.Tests
         {
             var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
             {
-                ProjectFileName = "DryRunner.TestWebsite.csproj"
+                Deployer = new TestSiteDeployerOptions { ProjectFileName = "DryRunner.TestWebsite.csproj" }
             });
             CheckSite(manager, "http://localhost:8888");
         }
@@ -38,7 +41,7 @@ namespace DryRunner.Tests
         {
             var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
             {
-                EnableWindowsAuthentication = true
+                Server = new TestSiteServerOptions { EnableWindowsAuthentication = true }
             });
             CheckSite(manager, "http://localhost:8888");
         }
@@ -48,8 +51,11 @@ namespace DryRunner.Tests
         {
             var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
             {
-                Port = 9000,
-                ApplicationPath = "/blub"
+                Server = new TestSiteServerOptions
+                {
+                    Port = 9000,
+                    ApplicationPath = "/blub"
+                }
             });
             CheckSite(manager, "http://localhost:9000/blub");
         }

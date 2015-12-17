@@ -1,5 +1,5 @@
 using System;
-using System.IO;
+using DryRunner.Options;
 
 namespace DryRunner
 {
@@ -19,25 +19,11 @@ namespace DryRunner
         public TestSiteManager(string projectName, TestSiteOptions options = null)
         {
             options = options ?? new TestSiteOptions();
+            options.ApplyDefaultsWhereNecessary (projectName);
+            options.Validate();
 
-            if (options.ApplicationPath == null || !options.ApplicationPath.StartsWith("/"))
-                throw new ArgumentException("Application path must start with '/'.", "options");
-
-            if (string.IsNullOrWhiteSpace(options.Configuration))
-                throw new ArgumentException("Build configuration cannot be null or empty.", "options");
-
-            string siteRoot = (!string.IsNullOrWhiteSpace(options.ProjectDir)) ? options.ProjectDir : GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
-            if (!Directory.Exists(siteRoot))
-                throw new Exception("A project with name '" + projectName + "' could not be found.");
-
-            if (options.ProjectFileName == null)
-                options.ProjectFileName = projectName + ".csproj";
-
-            _deployer = new TestSiteDeployer(siteRoot, options);
-
-            _server = new TestSiteServer(_deployer.TestSitePath,
-                options.Port, options.ApplicationPath,
-                options.ShowIisExpressWindow, options.EnableWindowsAuthentication);
+            _deployer = new TestSiteDeployer(options.Deployer);
+            _server = new TestSiteServer (_deployer.TestSitePath, options.Server);
         }
 
         public void Start()
@@ -49,14 +35,6 @@ namespace DryRunner
         public void Stop()
         {
             _server.Stop();
-        }
-
-        private static string GetPathRelativeToCurrentAssemblyPath(string relativePath)
-        {
-            string asmFilePath = new Uri(typeof(TestSiteDeployer).Assembly.CodeBase).LocalPath;
-            string asmPath = Path.GetDirectoryName(asmFilePath);
-            string fullPath = Path.Combine(asmPath, relativePath);
-            return Path.GetFullPath(fullPath);
         }
     }
 }
