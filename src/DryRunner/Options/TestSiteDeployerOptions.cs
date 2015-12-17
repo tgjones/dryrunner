@@ -61,13 +61,13 @@ namespace DryRunner.Options
         public MsBuildToolsVersion MsBuildToolsVersion { get; set; }
 
         /// <summary>
-        /// True to use a 32-bit version of MSBuild.
+        /// True to use a 64-bit version of MSBuild.
         /// Defaults to false.
         /// </summary>
-        public bool Use32BitMsBuild { get; set; }
+        public bool Use64BitMsBuild { get; set; }
 
         /// <summary>
-        /// Function that resolves the MSBuild exe path dependent on the <see cref="MsBuildToolsVersion"/> and <see cref="Use32BitMsBuild"/>.
+        /// Function that resolves the MSBuild exe path dependent on the <see cref="MsBuildToolsVersion"/> and <see cref="Use64BitMsBuild"/>.
         /// Can be overwritten to use a non-default MSBuild exe path.
         /// </summary>
         public ResolveMsBuildExePath MsBuildExePathResolver { get; set; }

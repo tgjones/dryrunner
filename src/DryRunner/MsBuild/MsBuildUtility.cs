@@ -10,7 +10,7 @@ namespace DryRunner.MsBuild
 {
     public static class MsBuildUtility
     {
-        public static string GetMsBuildPathFromRegistry(MsBuildToolsVersion toolsVersion, bool use32Bit)
+        public static string GetMsBuildPathFromRegistry(MsBuildToolsVersion toolsVersion, bool use64Bit)
         {
             const string valueName32Bit = "MSBuildToolsPath32";
             const string valueName64Bit = "MSBuildToolsPath";
@@ -22,7 +22,7 @@ namespace DryRunner.MsBuild
                             string.Format("For the given tools version '{0}' no registry key could be found.", toolsVersion),
                             "toolsVersion");
 
-                var valueName = use32Bit ? valueName32Bit : valueName64Bit;
+                var valueName = use64Bit ? valueName64Bit : valueName32Bit;
                 var value = (string)key.GetValue(valueName, null);
 
                 while (value != null && value.StartsWith("$(Registry:") && value.EndsWith(")"))
@@ -31,7 +31,7 @@ namespace DryRunner.MsBuild
                     value = (string)Registry.GetValue(path[0], path[1], null);
                 }
 
-                if (use32Bit && value == null)
+                if (use64Bit && value == null)
                     value = ((string)key.GetValue(valueName64Bit, null)).Replace("64", "");
 
                 return Path.Combine(value, "MSBuild.exe");
@@ -60,7 +60,7 @@ namespace DryRunner.MsBuild
 
             using (TemporaryFile normalLogFile = new TemporaryFile(), errorLogFile = new TemporaryFile())
             {
-                var path = options.MsBuildExePathResolver(options.MsBuildToolsVersion, options.Use32BitMsBuild);
+                var path = options.MsBuildExePathResolver(options.MsBuildToolsVersion, options.Use64BitMsBuild);
                 var arguments = string.Format(
                         "{0} /p:{1} /t:{2} /fl1 /flp1:{3} /fl2 /flp2:{4}",
                         projectFilePath,
