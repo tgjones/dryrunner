@@ -2,11 +2,24 @@ using System;
 
 namespace DryRunner.Options
 {
+    /// <summary>
+    /// Options for customizing the test site deployment and hosting.
+    /// </summary>
     public class TestSiteOptions
     {
+        /// <summary>
+        /// Options for customizing the test site deployment.
+        /// </summary>
         public TestSiteDeployerOptions Deployer { get; set; }
+
+        /// <summary>
+        /// Options for customizing the test site hosting.
+        /// </summary>
         public TestSiteServerOptions Server { get; set; }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public TestSiteOptions()
         {
             Deployer = new TestSiteDeployerOptions();

@@ -3,6 +3,9 @@ using DryRunner.Options;
 
 namespace DryRunner
 {
+    /// <summary>
+    /// Deploys and hosts a test site (by using <see cref="TestSiteDeployer"/> and <see cref="TestSiteServer"/>.
+    /// </summary>
     public class TestSiteManager
     {
         private readonly TestSiteDeployer _deployer;
@@ -26,12 +29,18 @@ namespace DryRunner
             _server = new TestSiteServer (_deployer.TestSitePath, options.Server);
         }
 
+        /// <summary>
+        /// Deploys and starts the configured test site.
+        /// </summary>
         public void Start()
         {
             _deployer.Deploy();
             _server.Start();
         }
 
+        /// <summary>
+        /// Stops the configured test site.
+        /// </summary>
         public void Stop()
         {
             _server.Stop();

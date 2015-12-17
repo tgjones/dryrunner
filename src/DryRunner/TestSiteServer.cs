@@ -8,6 +8,9 @@ using DryRunner.Options;
 
 namespace DryRunner
 {
+    /// <summary>
+    /// Hosts the test site in IISExpress.
+    /// </summary>
     public class TestSiteServer
     {
         private readonly string _physicalSitePath;
@@ -16,12 +19,19 @@ namespace DryRunner
         private Process _process;
         private ManualResetEventSlim _manualResetEvent;
 
+        /// <summary>
+        /// Creates a new test site server that hosts the application located on the given <paramref name="physicalSitePath"/> using 
+        /// options defined in <paramref name="options"/>.
+        /// </summary>
         public TestSiteServer(string physicalSitePath, TestSiteServerOptions options)
         {
             _physicalSitePath = physicalSitePath;
             _options = options;
         }
 
+        /// <summary>
+        /// Starts the IISExpress process that hosts the test site.
+        /// </summary>
         public void Start()
         {
             _manualResetEvent = new ManualResetEventSlim(false);
@@ -100,6 +110,9 @@ namespace DryRunner
                 return reader.ReadToEnd();
         }
 
+        /// <summary>
+        /// Stops the IISExpress process that hosts the test site.
+        /// </summary>
         public void Stop()
         {
             if (_process == null)

@@ -9,20 +9,32 @@ using DryRunner.Util;
 
 namespace DryRunner
 {
+    /// <summary>
+    /// Builds and packages the test site using MSBuild.
+    /// </summary>
     public class TestSiteDeployer
     {
         private readonly TestSiteDeployerOptions _options;
 
+        /// <summary>
+        /// The path at which the built and packaged test site lies.
+        /// </summary>
         public string TestSitePath
         {
             get { return Path.Combine(_options.ProjectDir, @"obj\" + _options.BuildConfiguration + @"\Package\PackageTmp"); }
         }
 
+        /// <summary>
+        /// Creates a new test site deployed using options defined in <paramref name="options"/>.
+        /// </summary>
         public TestSiteDeployer(TestSiteDeployerOptions options)
         {
             _options = options;
         }
 
+        /// <summary>
+        /// Deploys (builds and packages) the test site.
+        /// </summary>
         public void Deploy()
         {
             var result = Build(_options);

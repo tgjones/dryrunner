@@ -3,6 +3,9 @@ using DryRunner.Exceptions;
 
 namespace DryRunner.Options
 {
+    /// <summary>
+    /// Options for customizing the way a test site is hosted (inside IISExpress)
+    /// </summary>
     public class TestSiteServerOptions
     {
         /// <summary>
@@ -26,6 +29,9 @@ namespace DryRunner.Options
         /// </summary>
         public bool EnableWindowsAuthentication { get; set; }
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public TestSiteServerOptions()
         {
             Port = 8888;

@@ -8,8 +8,14 @@ using Microsoft.Win32;
 
 namespace DryRunner.Options
 {
+    /// <summary>
+    /// Options for customizing the way a test site is deployed (=built and packaged with MSBuild)
+    /// </summary>
     public class TestSiteDeployerOptions
     {
+        /// <summary>
+        /// Returns a path to an MSBuild executable dependent on the <paramref name="toolsVersion"/> and the <paramref name="use32Bit"/> flag.
+        /// </summary>
         public delegate string ResolveMsBuildExePath(MsBuildToolsVersion toolsVersion, bool use32Bit);
 
         private readonly string[] _defaultBuildTargets = { "Clean", "Package" };
@@ -81,6 +87,9 @@ namespace DryRunner.Options
         /// </summary>
         public bool ShowMsBuildWindow { get; set; }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public TestSiteDeployerOptions ()
         {
             BuildConfiguration = "Test";
