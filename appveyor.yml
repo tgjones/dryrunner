@@ -28,6 +28,9 @@ assembly_info:
   assembly_version: $(BuildVersion)
   assembly_file_version: $(BuildVersion)
   assembly_informational_version: $(BuildVersion)
+  
+before_build:
+  - nuget restore src\DryRunner.sln
 
 build:
   project: src/DryRunner.sln

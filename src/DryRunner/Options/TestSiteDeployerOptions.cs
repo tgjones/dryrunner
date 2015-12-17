@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using DryRunner.Exceptions;
 using DryRunner.Util;
+using JetBrains.Annotations;
 using Microsoft.Win32;
 
 namespace DryRunner.Options
@@ -11,6 +12,7 @@ namespace DryRunner.Options
     /// <summary>
     /// Options for customizing the way a test site is deployed (=built and packaged with MSBuild)
     /// </summary>
+    [PublicAPI]
     public class TestSiteDeployerOptions
     {
         /// <summary>

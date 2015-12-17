@@ -38,3 +38,5 @@ httpd.parse.errors
 # *.dll
 /src/RoastedAmoeba.Website.Web/Assets/Combined/combined.css
 /src/RoastedAmoeba.Website.Web/Assets/Combined/combined.js
+
+packages

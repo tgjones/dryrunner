@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using JetBrains.Annotations;
 
 namespace DryRunner.Exceptions
 {
@@ -7,6 +8,7 @@ namespace DryRunner.Exceptions
     /// BuildFailedException is thrown when the MSBuild build process failed.
     /// </summary>
     [Serializable]
+    [PublicAPI]
     public class BuildFailedException : Exception
     {
         /// <summary>

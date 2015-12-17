@@ -1,11 +1,13 @@
 using System;
 using DryRunner.Exceptions;
+using JetBrains.Annotations;
 
 namespace DryRunner.Options
 {
     /// <summary>
     /// Options for customizing the way a test site is hosted (inside IISExpress)
     /// </summary>
+    [PublicAPI]
     public class TestSiteServerOptions
     {
         /// <summary>

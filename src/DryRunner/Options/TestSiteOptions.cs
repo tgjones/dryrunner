@@ -1,10 +1,12 @@
 using System;
+using JetBrains.Annotations;
 
 namespace DryRunner.Options
 {
     /// <summary>
     /// Options for customizing the test site deployment and hosting.
     /// </summary>
+    [PublicAPI]
     public class TestSiteOptions
     {
         /// <summary>
