@@ -1,0 +1,42 @@
+using System;
+using DryRunner.Exceptions;
+
+namespace DryRunner.Options
+{
+    public class TestSiteServerOptions
+    {
+        /// <summary>
+        /// Port to use for the IIS Express instance. Defaults to 8888.
+        /// </summary>
+        public uint Port { get; set; }
+
+        /// <summary>
+        /// Website application path. Defaults to the server root <c>"/"</c>.
+        /// </summary>
+        public string ApplicationPath { get; set; }
+
+        /// <summary>
+        /// True to make the IIS Express command-line window visible, otherwise false.
+        /// Defaults to true.
+        /// </summary>
+        public bool ShowIisExpressWindow { get; set; }
+
+        /// <summary>
+        /// Enables Windows Authentication for IIS Express.
+        /// </summary>
+        public bool EnableWindowsAuthentication { get; set; }
+
+        public TestSiteServerOptions()
+        {
+            Port = 8888;
+            ApplicationPath = "/";
+            ShowIisExpressWindow = true;
+        }
+
+        internal void Validate(string optionsName)
+        {
+            if (ApplicationPath == null || !ApplicationPath.StartsWith("/"))
+                throw new OptionValidationException("Application path must start with '/'.", optionsName, "ApplicationPath");
+        }
+    }
+}

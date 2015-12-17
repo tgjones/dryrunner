@@ -31,8 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Build" />
-    <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,12 +40,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuildFailedException.cs" />
+    <Compile Include="Exceptions\BuildFailedException.cs" />
+    <Compile Include="Exceptions\OptionCannotBeNullException.cs" />
+    <Compile Include="Exceptions\OptionCannotBeNullOrEmptyException.cs" />
+    <Compile Include="Options\TestSiteServerOptions.cs" />
+    <Compile Include="Options\TestSiteDeployerOptions.cs" />
+    <Compile Include="MsBuild\MsBuildResult.cs" />
+    <Compile Include="MsBuild\MsBuildToolsVersion.cs" />
+    <Compile Include="MsBuild\MsBuildUtility.cs" />
+    <Compile Include="Exceptions\OptionValidationException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecordingEventRedirector.cs" />
     <Compile Include="TestSiteDeployer.cs" />
     <Compile Include="TestSiteManager.cs" />
-    <Compile Include="TestSiteOptions.cs" />
+    <Compile Include="Options\TestSiteOptions.cs" />
     <Compile Include="TestSiteServer.cs" />
   </ItemGroup>
   <ItemGroup>
