@@ -71,7 +71,7 @@ namespace DryRunner.MsBuild
                         );
 
                 var process = Process.Start (new ProcessStartInfo (path, arguments) { CreateNoWindow = !options.ShowMsBuildWindow, UseShellExecute = false });
-                Debug.Assert(process != null, "process != null");
+                Trace.Assert(process != null, "process != null");
                 process.WaitForExit();
 
                 return process.ExitCode == 0

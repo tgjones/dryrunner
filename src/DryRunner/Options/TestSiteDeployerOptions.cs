@@ -11,7 +11,7 @@ namespace DryRunner.Options
     {
         public delegate string ResolveMsBuildExePath(MsBuildToolsVersion toolsVersion, bool use32Bit);
 
-        private string[] _defaultBuildTargets = { "Clean", "Package" };
+        private readonly string[] _defaultBuildTargets = { "Clean", "Package" };
 
         /// <summary>
         /// Filename of the website project you want to test, including the extension (i.e. .csproj, .vbproj).
@@ -35,11 +35,7 @@ namespace DryRunner.Options
         /// The build targets that are invoked in MSBuild.
         /// Defaults to 'Clean' and 'Package'.
         /// </summary>
-        public string[] BuildTargets
-        {
-            get { return _defaultBuildTargets; }
-            set { _defaultBuildTargets = value; }
-        }
+        public string[] BuildTargets { get; set; }
 
         /// <summary>
         /// Build configuration to use.
