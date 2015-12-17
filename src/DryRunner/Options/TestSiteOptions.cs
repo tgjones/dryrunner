@@ -13,13 +13,13 @@ namespace DryRunner.Options
             Server = new TestSiteServerOptions();
         }
 
-        public void Validate()
+        internal void Validate()
         {
             Deployer.Validate("Deployer");
             Server.Validate("Server");
         }
 
-        public void ApplyDefaultsWhereNecessary(string projectName)
+        internal void ApplyDefaultsWhereNecessary(string projectName)
         {
             if (Deployer == null)
                 Deployer = new TestSiteDeployerOptions();

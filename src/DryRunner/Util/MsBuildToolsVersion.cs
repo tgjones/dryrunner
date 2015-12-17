@@ -1,10 +1,10 @@
 using System;
 
-namespace DryRunner.MsBuild
+namespace DryRunner.Util
 {
     public class MsBuildToolsVersion
     {
-        public string Version { get; private set; }
+        internal string Version { get; private set; }
 
         public static MsBuildToolsVersion v2_0 = new MsBuildToolsVersion ("2.0");
         public static MsBuildToolsVersion v3_5 = new MsBuildToolsVersion("3.5");
@@ -20,7 +20,7 @@ namespace DryRunner.MsBuild
         private MsBuildToolsVersion (string version)
         {
             if (string.IsNullOrWhiteSpace (version))
-                throw new ArgumentException ("Cannot be null or empty.", "version");
+                throw new ArgumentException ("Version cannot be null or empty.", "version");
 
             Version = version;
         }

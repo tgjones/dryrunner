@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using DryRunner.Exceptions;
-using DryRunner.MsBuild;
 using DryRunner.Options;
+using DryRunner.Util;
 
 namespace DryRunner
 {
@@ -22,7 +25,7 @@ namespace DryRunner
 
         public void Deploy()
         {
-            var result = MsBuildUtility.Build(_options);
+            var result = Build(_options);
 
             if (!result.WasSuccessful|| !Directory.Exists(TestSitePath))
             {
@@ -30,6 +33,72 @@ namespace DryRunner
                               + Environment.NewLine + Environment.NewLine
                               + result.ErrorOutput;
                 throw new BuildFailedException(message, result.Output);
+            }
+        }
+
+        private MsBuildResult Build(TestSiteDeployerOptions options)
+        {
+            var projectFilePath = Path.Combine(options.ProjectDir, options.ProjectFileName);
+
+            var properties = new Dictionary<string, string>();
+            properties.Add("Configuration", options.BuildConfiguration);
+
+            if (!string.IsNullOrWhiteSpace(options.SolutionDir))
+                properties.Add("SolutionDir", options.SolutionDir);
+
+            if (!string.IsNullOrWhiteSpace(options.ProjectDir) && options.ProjectDirSetByUser)
+                properties.Add("ProjectDir", options.ProjectDir);
+
+            if (!string.IsNullOrWhiteSpace(options.TransformationConfiguration))
+                properties.Add("ProjectConfigTransformFileName", "Web." + options.TransformationConfiguration + ".config");
+
+            if (options.AdditionalBuildProperties != null)
+                foreach (var property in options.AdditionalBuildProperties)
+                    properties.Add(property.Key, property.Value);
+
+            using (TemporaryFile normalLogFile = new TemporaryFile(), errorLogFile = new TemporaryFile())
+            {
+                var path = options.MsBuildExePathResolver(options.MsBuildToolsVersion, options.Use64BitMsBuild);
+                var arguments = string.Format(
+                        "{0} /p:{1} /t:{2} /fl1 /flp1:{3} /fl2 /flp2:{4}",
+                        projectFilePath,
+                        string.Join(";", properties.Select(kvp => kvp.Key + "=" + kvp.Value)),
+                        string.Join(";", options.BuildTargets),
+                        string.Format("LogFile={0};Verbosity=Normal", normalLogFile.Path),
+                        string.Format("LogFile={0};ErrorsOnly", errorLogFile.Path)
+                        );
+
+                var process = Process.Start(new ProcessStartInfo(path, arguments) { CreateNoWindow = !options.ShowMsBuildWindow, UseShellExecute = false });
+                Trace.Assert(process != null, "process != null");
+                process.WaitForExit();
+
+                return process.ExitCode == 0
+                        ? MsBuildResult.Success(normalLogFile.GetContents())
+                        : MsBuildResult.Failure(normalLogFile.GetContents(), errorLogFile.GetContents());
+            }
+        }
+
+        private class MsBuildResult
+        {
+            public bool WasSuccessful { get; private set; }
+            public string ErrorOutput { get; private set; }
+            public string Output { get; private set; }
+
+            private MsBuildResult(bool wasSuccessful, string output, string errorOutput)
+            {
+                WasSuccessful = wasSuccessful;
+                ErrorOutput = errorOutput;
+                Output = output;
+            }
+
+            public static MsBuildResult Success(string output)
+            {
+                return new MsBuildResult(true, output, null);
+            }
+
+            public static MsBuildResult Failure(string output, string errorOutput)
+            {
+                return new MsBuildResult(false, output, errorOutput);
             }
         }
     }

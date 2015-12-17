@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DryRunner.Exceptions;
-using DryRunner.MsBuild;
+using DryRunner.Util;
+using Microsoft.Win32;
 
 namespace DryRunner.Options
 {
@@ -85,7 +86,7 @@ namespace DryRunner.Options
             BuildConfiguration = "Test";
             BuildTargets = _defaultBuildTargets;
             MsBuildToolsVersion = MsBuildToolsVersion.v4_0;
-            MsBuildExePathResolver = MsBuildUtility.GetMsBuildPathFromRegistry;
+            MsBuildExePathResolver = GetMsBuildPathFromRegistry;
         }
 
         internal void Validate(string optionsName)
@@ -132,6 +133,34 @@ namespace DryRunner.Options
             var asmPath = Path.GetDirectoryName(asmFilePath);
             var fullPath = Path.Combine(asmPath, relativePath);
             return Path.GetFullPath(fullPath);
+        }
+
+        private static string GetMsBuildPathFromRegistry(MsBuildToolsVersion toolsVersion, bool use64Bit)
+        {
+            const string valueName32Bit = "MSBuildToolsPath32";
+            const string valueName64Bit = "MSBuildToolsPath";
+
+            using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\MSBuild\ToolsVersions\" + toolsVersion.Version))
+            {
+                if (key == null)
+                    throw new ArgumentException(
+                            string.Format("For the given tools version '{0}' no registry key could be found.", toolsVersion),
+                            "toolsVersion");
+
+                var valueName = use64Bit ? valueName64Bit : valueName32Bit;
+                var value = (string)key.GetValue(valueName, null);
+
+                while (value != null && value.StartsWith("$(Registry:") && value.EndsWith(")"))
+                {
+                    var path = value.Substring(11, value.Length - 12).Split('@');
+                    value = (string)Registry.GetValue(path[0], path[1], null);
+                }
+
+                if (use64Bit && value == null)
+                    value = ((string)key.GetValue(valueName64Bit, null)).Replace("64", "");
+
+                return Path.Combine(value, "MSBuild.exe");
+            }
         }
     }
 }

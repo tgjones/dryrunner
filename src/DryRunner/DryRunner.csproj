@@ -43,11 +43,10 @@
     <Compile Include="Exceptions\BuildFailedException.cs" />
     <Compile Include="Exceptions\OptionCannotBeNullException.cs" />
     <Compile Include="Exceptions\OptionCannotBeNullOrEmptyException.cs" />
+    <Compile Include="Util\TemporaryFile.cs" />
     <Compile Include="Options\TestSiteServerOptions.cs" />
     <Compile Include="Options\TestSiteDeployerOptions.cs" />
-    <Compile Include="MsBuild\MsBuildResult.cs" />
-    <Compile Include="MsBuild\MsBuildToolsVersion.cs" />
-    <Compile Include="MsBuild\MsBuildUtility.cs" />
+    <Compile Include="Util\MsBuildToolsVersion.cs" />
     <Compile Include="Exceptions\OptionValidationException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestSiteDeployer.cs" />
