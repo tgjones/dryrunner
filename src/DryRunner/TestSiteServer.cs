@@ -54,6 +54,7 @@ namespace DryRunner
 
             var startInfo = new ProcessStartInfo
             {
+                UseShellExecute = false,
                 WindowStyle = ProcessWindowStyle.Minimized,
                 CreateNoWindow = !_options.ShowIisExpressWindow,
                 Arguments = string.Format("/config:\"{0}\" /systray:true", applicationHostPath)
