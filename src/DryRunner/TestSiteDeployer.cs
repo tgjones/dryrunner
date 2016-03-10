@@ -72,7 +72,7 @@ namespace DryRunner
             {
                 var path = options.MsBuildExePathResolver(options.MsBuildToolsVersion, options.Use64BitMsBuild);
                 var arguments = string.Format(
-                        "{0} /p:{1} /t:{2} /fl1 /flp1:{3} /fl2 /flp2:{4}",
+                        @"""{0}"" ""/p:{1}"" ""/t:{2}"" /fl1 ""/flp1:{3}"" /fl2 ""/flp2:{4}""",
                         projectFilePath,
                         string.Join(";", properties.Select(kvp => kvp.Key + "=" + kvp.Value)),
                         string.Join(";", options.BuildTargets),
