@@ -50,13 +50,10 @@ namespace DryRunner
 
         private MsBuildResult Build(TestSiteDeployerOptions options)
         {
-            var projectFilePath = Path.Combine(options.ProjectDir, options.ProjectFileName);
-
             var properties = new Dictionary<string, string>
             {
                 {"Configuration", options.BuildConfiguration},
-                {"SolutionDir", options.SolutionDir},
-                {"ProjectDir", options.ProjectDir}
+                {"SolutionDir", options.SolutionDir}
             };
 
             if (!string.IsNullOrWhiteSpace(options.TransformationConfiguration))
@@ -71,7 +68,7 @@ namespace DryRunner
                 var path = options.MsBuildExePathResolver(options.MsBuildToolsVersion, options.Use64BitMsBuild);
                 var arguments = string.Format(
                         @"""{0}"" ""/p:{1}"" ""/t:{2}"" ""/v:{3}"" /fl1 ""/flp1:{4}"" /fl2 ""/flp2:{5}""",
-                        projectFilePath,
+                        options.ProjectFilePath,
                         string.Join(";", properties.Select(kvp => kvp.Key + "=" + kvp.Value)),
                         string.Join(";", options.BuildTargets),
                         options.MsBuildVerbosity,

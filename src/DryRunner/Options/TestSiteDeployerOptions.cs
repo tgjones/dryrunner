@@ -28,17 +28,15 @@ namespace DryRunner.Options
         /// </summary>
         public string ProjectFileName { get; set; }
 
+        internal string ProjectFilePath { get; set; }
+
         /// <summary>
         /// The path to the solution file.
         /// This is used to set the SolutionDir property so that it can be used in MSBuild macros.
         /// </summary>
         public string SolutionDir { get; set; }
 
-        /// <summary>
-        /// The path to the project.  
-        /// This is used to set the ProjectDir property so that it can be used in MSBuild macros.
-        /// </summary>
-        public string ProjectDir { get; set; }
+        internal string ProjectDir { get; set; }
 
         /// <summary>
         /// The build targets that are invoked in MSBuild.
@@ -115,11 +113,17 @@ namespace DryRunner.Options
                         optionsName,
                         "SolutionDir");
 
-            if (!Directory.Exists (ProjectDir))
+            if (!Directory.Exists(ProjectDir))
                 throw new OptionValidationException (
                         string.Format ("The project directory '{0}' could not be found.", ProjectDir),
                         optionsName,
                         "ProjectDir");
+
+            if (!File.Exists(ProjectFilePath))
+                throw new OptionValidationException(
+                        string.Format("The project file '{0}' could not be found.", ProjectFilePath),
+                        optionsName,
+                        "ProjectFileName");
 
             if (MsBuildExePathResolver == null)
                 throw new OptionCannotBeNullException(optionsName, "MsBuildExePathResolver");
@@ -147,6 +151,8 @@ namespace DryRunner.Options
 
             if (string.IsNullOrWhiteSpace(ProjectFileName))
                 ProjectFileName = projectName + ".csproj";
+
+            ProjectFilePath = Path.Combine(ProjectDir, ProjectFileName);
         }
 
         private static string GetPathRelativeToCurrentAssemblyPath(string relativePath)
