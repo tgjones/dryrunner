@@ -68,15 +68,16 @@ namespace DryRunner
                 foreach (var property in options.AdditionalBuildProperties)
                     properties.Add(property.Key, property.Value);
 
-            using (TemporaryFile normalLogFile = new TemporaryFile(), errorLogFile = new TemporaryFile())
+            using (TemporaryFile defaultLogFile = new TemporaryFile(), errorLogFile = new TemporaryFile())
             {
                 var path = options.MsBuildExePathResolver(options.MsBuildToolsVersion, options.Use64BitMsBuild);
                 var arguments = string.Format(
-                        @"""{0}"" ""/p:{1}"" ""/t:{2}"" /fl1 ""/flp1:{3}"" /fl2 ""/flp2:{4}""",
+                        @"""{0}"" ""/p:{1}"" ""/t:{2}"" ""/v:{3}"" /fl1 ""/flp1:{4}"" /fl2 ""/flp2:{5}""",
                         projectFilePath,
                         string.Join(";", properties.Select(kvp => kvp.Key + "=" + kvp.Value)),
                         string.Join(";", options.BuildTargets),
-                        string.Format("LogFile={0};Verbosity=Normal", normalLogFile.Path),
+                        options.MsBuildVerbosity,
+                        string.Format("LogFile={0};Verbosity={1}", defaultLogFile.Path, options.MsBuildVerbosity),
                         string.Format("LogFile={0};ErrorsOnly", errorLogFile.Path)
                         );
 
@@ -85,8 +86,8 @@ namespace DryRunner
                 process.WaitForExit();
 
                 return process.ExitCode == 0
-                        ? MsBuildResult.Success(normalLogFile.GetContents())
-                        : MsBuildResult.Failure(normalLogFile.GetContents(), errorLogFile.GetContents());
+                        ? MsBuildResult.Success(defaultLogFile.GetContents())
+                        : MsBuildResult.Failure(defaultLogFile.GetContents(), errorLogFile.GetContents());
             }
         }
 

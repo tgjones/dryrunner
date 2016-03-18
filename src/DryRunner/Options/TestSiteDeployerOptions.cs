@@ -72,6 +72,12 @@ namespace DryRunner.Options
         public MsBuildToolsVersion MsBuildToolsVersion { get; set; }
 
         /// <summary>
+        /// The verbosity used for MSBuild log output.
+        /// Defaults to <see cref="F:MsBuildVerbosity.Normal"/>.
+        /// </summary>
+        public MsBuildVerbosity MsBuildVerbosity { get; set; }
+
+        /// <summary>
         /// True to use a 64-bit version of MSBuild.
         /// Defaults to false.
         /// </summary>
