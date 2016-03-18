@@ -39,7 +39,7 @@ namespace DryRunner
         {
             var result = Build(_options);
 
-            if (!result.WasSuccessful|| !Directory.Exists(TestSitePath))
+            if (!result.WasSuccessful || !Directory.Exists(TestSitePath))
             {
                 var message = "Build failed! See property BuildOutput ensure that you have a " + _options.BuildConfiguration + " build configuration."
                               + Environment.NewLine + Environment.NewLine
@@ -52,14 +52,12 @@ namespace DryRunner
         {
             var projectFilePath = Path.Combine(options.ProjectDir, options.ProjectFileName);
 
-            var properties = new Dictionary<string, string>();
-            properties.Add("Configuration", options.BuildConfiguration);
-
-            if (!string.IsNullOrWhiteSpace(options.SolutionDir))
-                properties.Add("SolutionDir", options.SolutionDir);
-
-            if (!string.IsNullOrWhiteSpace(options.ProjectDir) && options.ProjectDirSetByUser)
-                properties.Add("ProjectDir", options.ProjectDir);
+            var properties = new Dictionary<string, string>
+            {
+                {"Configuration", options.BuildConfiguration},
+                {"SolutionDir", options.SolutionDir},
+                {"ProjectDir", options.ProjectDir}
+            };
 
             if (!string.IsNullOrWhiteSpace(options.TransformationConfiguration))
                 properties.Add("ProjectConfigTransformFileName", "Web." + options.TransformationConfiguration + ".config");
@@ -79,7 +77,10 @@ namespace DryRunner
                         options.MsBuildVerbosity,
                         string.Format("LogFile={0};Verbosity={1}", defaultLogFile.Path, options.MsBuildVerbosity),
                         string.Format("LogFile={0};ErrorsOnly", errorLogFile.Path)
-                        );
+                        )
+                    // Fix escaping, since \" would lead to errors (since it would escape the quotes). 
+                    // This happens mostly with directory properties (e.g. SolutionDir) which should end with a \.
+                        .Replace(@"\""", @"\\""");
 
                 var process = Process.Start(new ProcessStartInfo(path, arguments) { CreateNoWindow = !options.ShowMsBuildWindow, UseShellExecute = false });
                 Trace.Assert(process != null, "process != null");

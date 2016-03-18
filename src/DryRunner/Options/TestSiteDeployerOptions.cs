@@ -40,8 +40,6 @@ namespace DryRunner.Options
         /// </summary>
         public string ProjectDir { get; set; }
 
-        internal bool ProjectDirSetByUser { get; set; }
-
         /// <summary>
         /// The build targets that are invoked in MSBuild.
         /// Defaults to 'Clean' and 'Package'.
@@ -111,6 +109,12 @@ namespace DryRunner.Options
             if (string.IsNullOrWhiteSpace (BuildConfiguration))
                 throw new OptionValidationException ("Configuration cannot be null or empty.", optionsName, "Configuration");
 
+            if (!Directory.Exists(SolutionDir))
+                throw new OptionValidationException(
+                        string.Format("The solution directory '{0}' could not be found.", SolutionDir),
+                        optionsName,
+                        "SolutionDir");
+
             if (!Directory.Exists (ProjectDir))
                 throw new OptionValidationException (
                         string.Format ("The project directory '{0}' could not be found.", ProjectDir),
@@ -135,10 +139,11 @@ namespace DryRunner.Options
 
         internal void ApplyDefaultsWhereNecessary (string projectName)
         {
+            if (string.IsNullOrWhiteSpace(SolutionDir))
+                SolutionDir = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\");
+
             if (string.IsNullOrWhiteSpace(ProjectDir))
-                ProjectDir = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\" + projectName);
-            else
-                ProjectDirSetByUser = true;
+                ProjectDir = Path.Combine(SolutionDir, projectName) + @"\";
 
             if (string.IsNullOrWhiteSpace(ProjectFileName))
                 ProjectFileName = projectName + ".csproj";
