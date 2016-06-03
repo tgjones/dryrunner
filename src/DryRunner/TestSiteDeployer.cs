@@ -66,6 +66,12 @@ namespace DryRunner
             using (TemporaryFile defaultLogFile = new TemporaryFile(), errorLogFile = new TemporaryFile())
             {
                 var path = options.MsBuildExePathResolver(options.MsBuildToolsVersion, options.Use64BitMsBuild);
+
+                var additionalLoggers = options.AdditionalMsBuildFileLoggers != null &&
+                                        options.AdditionalMsBuildFileLoggers.Any()
+                    ? string.Join(" ", options.AdditionalMsBuildFileLoggers.Select((l, i) => l.GetLoggerString(i + 3)))
+                    : "";
+
                 var arguments = string.Format(
                         @"""{0}"" ""/p:{1}"" ""/t:{2}"" ""/v:{3}"" /fl1 ""/flp1:{4}"" /fl2 ""/flp2:{5}"" {6}",
                         options.ProjectFilePath,
@@ -74,7 +80,7 @@ namespace DryRunner
                         options.MsBuildVerbosity,
                         string.Format("LogFile={0};Verbosity={1}", defaultLogFile.Path, options.MsBuildVerbosity),
                         string.Format("LogFile={0};ErrorsOnly", errorLogFile.Path),
-                        string.Join(" ", options.AdditionalMsBuildFileLoggers.Select((l, i) => l.GetLoggerString(i + 3)))
+                        additionalLoggers
                         )
                     // Fix escaping, since \" would lead to errors (since it would escape the quotes). 
                     // This happens mostly with directory properties (e.g. SolutionDir) which should end with a \.

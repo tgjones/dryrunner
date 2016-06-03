@@ -147,7 +147,7 @@ namespace DryRunner.Options
             if (MsBuildToolsVersion == null)
                 throw new OptionCannotBeNullException(optionsName, "MsBuildToolsVersion");
 
-            if (AdditionalMsBuildFileLoggers.Count() > 7)
+            if (AdditionalMsBuildFileLoggers != null && AdditionalMsBuildFileLoggers.Count() > 7)
                 throw new OptionValidationException("It is not possible to supply more than 7 additional file loggers " +
                                                     "(since MSBuild only supports 9 in total and 2 are already used internally).", optionsName, "AdditionalMsBuildFileLoggers");
         }

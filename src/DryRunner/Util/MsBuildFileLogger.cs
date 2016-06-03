@@ -157,8 +157,9 @@ namespace DryRunner.Util
                     yield return "DisableMPLogging";
             }
 
-            foreach(var flag in AdditionalFlags)
-                yield return flag;
+            if (AdditionalFlags != null)
+                foreach (var flag in AdditionalFlags)
+                    yield return flag;
         }
     }
 }
