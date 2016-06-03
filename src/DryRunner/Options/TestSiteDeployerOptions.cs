@@ -74,6 +74,12 @@ namespace DryRunner.Options
         public MsBuildVerbosity MsBuildVerbosity { get; set; }
 
         /// <summary>
+        /// Allows specifying additional <see cref="MsBuildFileLogger"/>s to be used. 
+        /// Only allows up to 7 additional <see cref="MsBuildFileLogger"/>s (since MSBuild only supports 9 and 2 are already used internally)!
+        /// </summary>
+        public IEnumerable<MsBuildFileLogger> AdditionalMsBuildFileLoggers { get; set; }
+
+        /// <summary>
         /// True to use a 64-bit version of MSBuild.
         /// Defaults to false.
         /// </summary>
@@ -137,8 +143,12 @@ namespace DryRunner.Options
             if (string.IsNullOrWhiteSpace(BuildConfiguration))
                 throw new OptionCannotBeNullOrEmptyException(optionsName, "BuildConfiguration");
 
-            if(MsBuildToolsVersion == null)
+            if (MsBuildToolsVersion == null)
                 throw new OptionCannotBeNullException(optionsName, "MsBuildToolsVersion");
+
+            if (AdditionalMsBuildFileLoggers.Count() > 7)
+                throw new OptionValidationException("It is not possible to supply more than 7 additional file loggers " +
+                                                    "(since MSBuild only supports 9 in total and 2 are already used internally).", optionsName, "AdditionalMsBuildFileLoggers");
         }
 
         internal void ApplyDefaultsWhereNecessary (string projectName)

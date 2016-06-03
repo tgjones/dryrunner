@@ -49,6 +49,8 @@
     <Compile Include="Exceptions\BuildFailedException.cs" />
     <Compile Include="Exceptions\OptionCannotBeNullException.cs" />
     <Compile Include="Exceptions\OptionCannotBeNullOrEmptyException.cs" />
+    <Compile Include="Util\MsBuildFileLogger.cs" />
+    <Compile Include="Util\MsBuildFileLoggerMessageFilter.cs" />
     <Compile Include="Util\MsBuildVerbosity.cs" />
     <Compile Include="Util\TemporaryFile.cs" />
     <Compile Include="Options\TestSiteServerOptions.cs" />
