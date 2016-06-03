@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using DryRunner.Exceptions;
@@ -169,6 +170,7 @@ namespace DryRunner.Options
         {
             var asmFilePath = new Uri(typeof(TestSiteDeployer).Assembly.CodeBase).LocalPath;
             var asmPath = Path.GetDirectoryName(asmFilePath);
+            Debug.Assert(asmPath != null, "asmPath != null");
             var fullPath = Path.Combine(asmPath, relativePath);
             return Path.GetFullPath(fullPath);
         }
@@ -197,6 +199,7 @@ namespace DryRunner.Options
                 if (use64Bit && value == null)
                     value = ((string)key.GetValue(valueName64Bit, null)).Replace("64", "");
 
+                Debug.Assert(value != null, "value != null");
                 return Path.Combine(value, "MSBuild.exe");
             }
         }

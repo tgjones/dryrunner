@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace DryRunner.Util
 {
     /// <summary>
     /// Verbosity used for MSBuild output.
     /// </summary>
+    [PublicAPI]
     public enum MsBuildVerbosity
     {
         /// <summary>

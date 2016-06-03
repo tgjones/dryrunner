@@ -1,10 +1,12 @@
 using System;
+using JetBrains.Annotations;
 
 namespace DryRunner.Util
 {
     /// <summary>
     /// Represents a MSBuild tools version.
     /// </summary>
+    [PublicAPI]
     public class MsBuildToolsVersion
     {
         internal string Version { get; private set; }
@@ -12,6 +14,7 @@ namespace DryRunner.Util
         /// <summary>
         /// MSBuild version included in .NET Framework 2.0
         /// </summary>
+        // ReSharper disable InconsistentNaming
         public static MsBuildToolsVersion v2_0 = new MsBuildToolsVersion ("2.0");
 
         /// <summary>
@@ -33,6 +36,7 @@ namespace DryRunner.Util
         /// MSBuild version included with Visual Studio 2015
         /// </summary>
         public static MsBuildToolsVersion v14_0 = new MsBuildToolsVersion("14.0");
+        // ReSharper restore InconsistentNaming
 
         /// <summary>
         /// Enables creation of a <see cref="MsBuildToolsVersion"/> that is covered in the default cases.

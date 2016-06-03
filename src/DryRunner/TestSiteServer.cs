@@ -107,8 +107,11 @@ namespace DryRunner
         private string GetApplicationHostConfigTemplate()
         {
             using (var stream = GetType().Assembly.GetManifestResourceStream(typeof(TestSiteServer), "applicationHost.config"))
-            using (var reader = new StreamReader(stream))
-                return reader.ReadToEnd();
+            {
+                Debug.Assert(stream != null, "stream != null");
+                using (var reader = new StreamReader(stream))
+                    return reader.ReadToEnd();
+            }
         }
 
         /// <summary>
@@ -125,8 +128,10 @@ namespace DryRunner
                 _process.Kill();
         }
 
+        // ReSharper disable InconsistentNaming
         private const int WM_KEYDOWN = 0x100;
         private static readonly IntPtr VK_Q = new IntPtr(0x51);
+        // ReSharper restore InconsistentNaming
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32.dll")]

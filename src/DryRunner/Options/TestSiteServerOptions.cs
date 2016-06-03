@@ -1,4 +1,3 @@
-using System;
 using DryRunner.Exceptions;
 using JetBrains.Annotations;
 

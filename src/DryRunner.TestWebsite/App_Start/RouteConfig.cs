@@ -1,9 +1,10 @@
-﻿using System;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using System.Web.Routing;
+using JetBrains.Annotations;
 
 namespace DryRunner.TestWebsite
 {
+    [UsedImplicitly]
 	public class RouteConfig
 	{
 		public static void RegisterRoutes(RouteCollection routes)

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace DryRunner.Util
 {
     /// <summary>
     /// Represents a MSBuild file logger.
     /// </summary>
+    [PublicAPI]
     public sealed class MsBuildFileLogger
     {
         /// <summary>
