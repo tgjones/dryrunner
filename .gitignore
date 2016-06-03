@@ -40,3 +40,4 @@ httpd.parse.errors
 /src/RoastedAmoeba.Website.Web/Assets/Combined/combined.js
 
 packages
+.vs
