@@ -15,6 +15,7 @@ namespace DryRunner
     {
         private readonly string _physicalSitePath;
         private readonly TestSiteServerOptions _options;
+        private readonly string _applicationHostPath;
 
         private Process _process;
         private ManualResetEventSlim _manualResetEvent;
@@ -27,6 +28,7 @@ namespace DryRunner
         {
             _physicalSitePath = physicalSitePath;
             _options = options;
+            _applicationHostPath = Path.GetTempFileName();
         }
 
         /// <summary>
@@ -49,15 +51,14 @@ namespace DryRunner
         {
             var applicationHostConfig = CreateApplicationHostConfig();
 
-            var applicationHostPath = Path.GetFullPath("applicationHost.config");
-            File.WriteAllText(applicationHostPath, applicationHostConfig);
+            File.WriteAllText(_applicationHostPath, applicationHostConfig);
 
             var startInfo = new ProcessStartInfo
             {
                 UseShellExecute = false,
                 WindowStyle = ProcessWindowStyle.Minimized,
                 CreateNoWindow = !_options.ShowIisExpressWindow,
-                Arguments = string.Format("/config:\"{0}\" /systray:true", applicationHostPath)
+                Arguments = string.Format("/config:\"{0}\" /systray:true", _applicationHostPath)
             };
 
             var programfiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
@@ -126,6 +127,8 @@ namespace DryRunner
             _process.WaitForExit(5000);
             if (!_process.HasExited)
                 _process.Kill();
+
+            File.Delete(_applicationHostPath);
         }
 
         // ReSharper disable InconsistentNaming
