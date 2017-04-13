@@ -35,8 +35,11 @@ Usage
 string websiteProjectName = "DryRunner.TestWebsite";
 TestSiteManager testSiteManager = new TestSiteManager(websiteProjectName, new TestSiteOptions
 {
-	Port = 9000, // Any port that won't conflict with other services running on your computer (optional; default is 8888).
-	ApplicationPath = "/blub" // Application path (optional; default is the server root "/").
+    Server = new TestSiteServerOptions
+    {
+        Port = 9000, // Any port that won't conflict with other services running on your computer (optional; default is 8888).
+        ApplicationPath = "/blub" // Application path (optional; default is the server root "/").
+    }
 });
 testSiteManager.Start();
 
