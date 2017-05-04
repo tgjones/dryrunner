@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using DryRunner.Options;
+using JetBrains.Annotations;
 
 namespace DryRunner
 {
@@ -24,11 +25,20 @@ namespace DryRunner
         /// Creates a new test site server that hosts the application located on the given <paramref name="physicalSitePath"/> using 
         /// options defined in <paramref name="options"/>.
         /// </summary>
+        [PublicAPI]
         public TestSiteServer(string physicalSitePath, TestSiteServerOptions options)
         {
             _physicalSitePath = physicalSitePath;
             _options = options;
             _applicationHostPath = Path.GetTempFileName();
+        }
+      
+        /// <summary>
+        /// Creates a new test site server that hosts the application deployed by the given <paramref name="deployer"/> using 
+        /// options defined in <paramref name="options"/>.
+        /// </summary>
+        public TestSiteServer(TestSiteDeployer deployer, TestSiteServerOptions options) : this(deployer.TestSitePath, options)
+        {
         }
 
         /// <summary>

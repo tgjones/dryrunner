@@ -24,6 +24,11 @@ namespace DryRunner.Options
         private readonly string[] _defaultBuildTargets = { "Clean", "Package" };
 
         /// <summary>
+        /// Name of the website project you want to test.
+        /// </summary>
+        public string ProjectName { get; private set; }
+
+        /// <summary>
         /// Filename of the website project you want to test, including the extension (i.e. .csproj, .vbproj).
         /// This is optional - if not set, it will default to {ProjectName}.csproj.
         /// </summary>
@@ -101,16 +106,24 @@ namespace DryRunner.Options
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public TestSiteDeployerOptions ()
+        public TestSiteDeployerOptions (string projectName)
         {
+            if(projectName == null)
+              throw new ArgumentNullException("projectName");
+
+            ProjectName = projectName;
             BuildConfiguration = "Test";
             BuildTargets = _defaultBuildTargets;
             MsBuildToolsVersion = MsBuildToolsVersion.v4_0;
             MsBuildExePathResolver = GetMsBuildPathFromRegistry;
+            ApplyDefaultsWhereNecessary();
+            Validate();
         }
 
-        internal void Validate(string optionsName)
+        private void Validate()
         {
+            const string optionsName = "Deployer";
+
             if (string.IsNullOrWhiteSpace (BuildConfiguration))
                 throw new OptionValidationException ("Configuration cannot be null or empty.", optionsName, "Configuration");
 
@@ -152,16 +165,16 @@ namespace DryRunner.Options
                                                     "(since MSBuild only supports 9 in total and 2 are already used internally).", optionsName, "AdditionalMsBuildFileLoggers");
         }
 
-        internal void ApplyDefaultsWhereNecessary (string projectName)
+        private void ApplyDefaultsWhereNecessary ()
         {
             if (string.IsNullOrWhiteSpace(SolutionDir))
                 SolutionDir = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\");
 
             if (string.IsNullOrWhiteSpace(ProjectDir))
-                ProjectDir = Path.Combine(SolutionDir, projectName) + @"\";
+                ProjectDir = Path.Combine(SolutionDir, ProjectName) + @"\";
 
             if (string.IsNullOrWhiteSpace(ProjectFileName))
-                ProjectFileName = projectName + ".csproj";
+                ProjectFileName = ProjectName + ".csproj";
 
             ProjectFilePath = Path.Combine(ProjectDir, ProjectFileName);
         }

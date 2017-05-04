@@ -13,19 +13,26 @@ namespace DryRunner
         /// <summary>
         /// Initializes a new instance of the <see cref="TestSiteManager" /> class.
         /// </summary>
+        /// <param name="deployerOptions">Options for the deployment (MsBuild deploy/publish).</param>
+        /// <param name="serverOptions">Options for the server (IIS Express).</param>
+        public TestSiteManager(TestSiteDeployerOptions deployerOptions, TestSiteServerOptions serverOptions = null)
+        {
+            _deployer = new TestSiteDeployer(deployerOptions);
+            _server = new TestSiteServer(_deployer, serverOptions ?? new TestSiteServerOptions());
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TestSiteManager" /> class.
+        /// </summary>
         /// <param name="projectName">Name of the web project. This is assumed to be
         /// both the project folder name, and also the <c>.csproj</c> name (without the .csproj extension).
-        /// If the project folder name and .csproj name are different, 
-        /// set the .csproj name in <paramref name="options"/>.</param>
-        /// <param name="options">Optional configuration settings.</param>
-        public TestSiteManager(string projectName, TestSiteOptions options = null)
+        /// If the project folder name and .csproj name are different, use the 
+        /// <see cref="TestSiteManager(TestSiteDeployerOptions,TestSiteServerOptions)" /> constructor.
+        /// </param>
+        /// <param name="serverOptions">Options for the server (IIS Express).</param>
+        public TestSiteManager(string projectName, TestSiteServerOptions serverOptions = null) 
+            : this(new TestSiteDeployerOptions(projectName), serverOptions)
         {
-            options = options ?? new TestSiteOptions();
-            options.ApplyDefaultsWhereNecessary (projectName);
-            options.Validate();
-
-            _deployer = new TestSiteDeployer(options.Deployer);
-            _server = new TestSiteServer (_deployer.TestSitePath, options.Server);
         }
 
         /// <summary>

@@ -17,31 +17,27 @@ namespace DryRunner.Tests
         [Test]
         public void CanDeploySiteWithHiddenIisExpressWindow()
         {
-            var manager = new TestSiteManager(
-                    "DryRunner.TestWebsite",
-                    new TestSiteOptions
-                    {
-                        Server = new TestSiteServerOptions { ShowIisExpressWindow = false }
-                    });
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteServerOptions {ShowIisExpressWindow = true});
             CheckSite(manager, "http://localhost:8888");
         }
 
         [Test]
         public void CanDeploySiteWithExplicitProjectFileName()
         {
-            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
-            {
-                Deployer = new TestSiteDeployerOptions { ProjectFileName = "DryRunner.TestWebsite.csproj" }
-            });
+            var manager =
+                new TestSiteManager(new TestSiteDeployerOptions("DryRunner.TestWebsite")
+                {
+                  ProjectFileName = "DryRunner.TestWebsite.csproj"
+                });
             CheckSite(manager, "http://localhost:8888");
         }
 
         [Test]
         public void CanDeploySiteWithEnableWindowsAuthentication()
         {
-            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteServerOptions
             {
-                Server = new TestSiteServerOptions { EnableWindowsAuthentication = true }
+                EnableWindowsAuthentication = true
             });
             CheckSite(manager, "http://localhost:8888");
         }
@@ -49,13 +45,10 @@ namespace DryRunner.Tests
         [Test]
         public void CanDeploySite_CustomPortAndApplicationPath()
         {
-            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteOptions
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteServerOptions
             {
-                Server = new TestSiteServerOptions
-                {
-                    Port = 9000,
-                    ApplicationPath = "/blub"
-                }
+                Port = 9000,
+                ApplicationPath = "/blub"
             });
             CheckSite(manager, "http://localhost:9000/blub");
         }

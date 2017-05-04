@@ -40,8 +40,10 @@ namespace DryRunner.Options
             ShowIisExpressWindow = true;
         }
 
-        internal void Validate(string optionsName)
+        internal void Validate()
         {
+            const string optionsName = "Server";
+
             if (ApplicationPath == null || !ApplicationPath.StartsWith("/"))
                 throw new OptionValidationException("Application path must start with '/'.", optionsName, "ApplicationPath");
         }
