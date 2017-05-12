@@ -7,6 +7,7 @@ using DryRunner.Exceptions;
 using DryRunner.Util;
 using JetBrains.Annotations;
 using Microsoft.Win32;
+using Microsoft.VisualStudio.Setup.Configuration;
 
 namespace DryRunner.Options
 {
@@ -190,6 +191,18 @@ namespace DryRunner.Options
 
         private static string GetMsBuildPathFromRegistry(MsBuildToolsVersion toolsVersion, bool use64Bit)
         {
+            if (toolsVersion == MsBuildToolsVersion.v15_0)
+            {
+                // VS2017 comes with MsBuild tools version 15 which does not include a registry key
+                int arrSize = 10, instanceCount;
+                ISetupInstance[] arr = new ISetupInstance[arrSize];
+                new SetupConfiguration().EnumInstances().Next(arrSize, arr, out instanceCount);
+
+                ISetupInstance instance = arr.FirstOrDefault(i => i.GetInstallationVersion().Contains("15"));
+                string msBuildSubFolder = use64Bit ? @"MSBuild\15.0\Bin\amd64" : @"MSBuild\15.0\Bin\";
+                return Path.Combine(instance.GetInstallationPath(), msBuildSubFolder, "MSBuild.exe");
+            }
+
             const string valueName32Bit = "MSBuildToolsPath32";
             const string valueName64Bit = "MSBuildToolsPath";
 

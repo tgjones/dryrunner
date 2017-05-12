@@ -36,6 +36,11 @@ namespace DryRunner.Util
         /// MSBuild version included with Visual Studio 2015
         /// </summary>
         public static MsBuildToolsVersion v14_0 = new MsBuildToolsVersion("14.0");
+
+        /// <summary>
+        /// MSBuild version included with Visual Studio 2017
+        /// </summary>
+        public static MsBuildToolsVersion v15_0 = new MsBuildToolsVersion("15.0");
         // ReSharper restore InconsistentNaming
 
         /// <summary>
