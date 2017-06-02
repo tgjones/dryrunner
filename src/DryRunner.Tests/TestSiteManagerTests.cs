@@ -19,7 +19,7 @@ namespace DryRunner.Tests
         [Test]
         public void CanDeploySiteWithHiddenIisExpressWindow()
         {
-            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteServerOptions {ShowIisExpressWindow = true});
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteServerOptions {ShowIisExpressWindow = false});
             CheckSite(manager, "http://localhost:8888");
         }
 
