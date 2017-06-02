@@ -19,16 +19,14 @@ namespace DryRunner
         /// <summary>
         /// The path at which the built and packaged test site lies.
         /// </summary>
-        public string TestSitePath
-        {
-            get { return Path.Combine(_options.ProjectDir, @"obj\" + _options.BuildConfiguration + @"\Package\PackageTmp"); }
-        }
+        public string TestSitePath {get { return _options.DeployDirectory; } }
 
         /// <summary>
         /// Creates a new test site deployed using options defined in <paramref name="options"/>.
         /// </summary>
         public TestSiteDeployer(TestSiteDeployerOptions options)
         {
+            options.FinalizeAndValidate();
             _options = options;
         }
 
@@ -53,7 +51,8 @@ namespace DryRunner
             var properties = new Dictionary<string, string>
             {
                 {"Configuration", options.BuildConfiguration},
-                {"SolutionDir", options.SolutionDir}
+                {"SolutionDir", options.SolutionDir},
+                {"_PackageTempDir", options.DeployDirectory}
             };
 
             if (!string.IsNullOrWhiteSpace(options.TransformationConfiguration))

@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using DryRunner.Options;
 using NUnit.Framework;
 
@@ -51,6 +53,21 @@ namespace DryRunner.Tests
                 ApplicationPath = "/blub"
             });
             CheckSite(manager, "http://localhost:9000/blub");
+        }
+
+        [Test]
+        public void CanDeploySite_WithCustomDeployDirectory()
+        {
+            var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
+            var manager = new TestSiteManager(new TestSiteDeployerOptions("DryRunner.TestWebsite") {DeployDirectory = tempPath});
+
+            CheckSite(manager, "http://localhost:8888");
+
+            var webConfigPath = Path.Combine(tempPath, "Web.config");
+            Assert.That(File.Exists(webConfigPath), Is.True);
+
+            Directory.Delete(tempPath, true);
         }
 
         private static void CheckSite(TestSiteManager testSiteManager, string surfToUrl)

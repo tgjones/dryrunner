@@ -45,6 +45,12 @@ namespace DryRunner.Options
         internal string ProjectDir { get; set; }
 
         /// <summary>
+        /// The directory the web application is deployed to (defaults to "{ProjectDir}\obj\{BuildConfiguration}\Package\PackageTmp").
+        /// Note that, the deploy directory is not automatically cleaned up, this has to be done outside of DryRunner.
+        /// </summary>
+        public string DeployDirectory { get; set; }
+
+        /// <summary>
         /// The build targets that are invoked in MSBuild.
         /// Defaults to 'Clean' and 'Package'.
         /// </summary>
@@ -116,6 +122,11 @@ namespace DryRunner.Options
             BuildTargets = _defaultBuildTargets;
             MsBuildToolsVersion = MsBuildToolsVersion.v4_0;
             MsBuildExePathResolver = GetMsBuildPathFromRegistry;
+            FinalizeAndValidate();
+        }
+
+        internal void FinalizeAndValidate()
+        {
             ApplyDefaultsWhereNecessary();
             Validate();
         }
@@ -175,6 +186,9 @@ namespace DryRunner.Options
 
             if (string.IsNullOrWhiteSpace(ProjectFileName))
                 ProjectFileName = ProjectName + ".csproj";
+
+            if (string.IsNullOrEmpty(DeployDirectory))
+                DeployDirectory = Path.Combine(ProjectDir, "obj", BuildConfiguration, "Package", "PackageTmp");
 
             ProjectFilePath = Path.Combine(ProjectDir, ProjectFileName);
         }
