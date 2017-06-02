@@ -29,6 +29,8 @@ namespace DryRunner
         public TestSiteServer(string physicalSitePath, TestSiteServerOptions options)
         {
             _physicalSitePath = physicalSitePath;
+
+            options.FinalizeAndValidate();
             _options = options;
             _applicationHostPath = Path.GetTempFileName();
         }
@@ -94,6 +96,7 @@ namespace DryRunner
         {
             var applicationHostConfig = new StringBuilder(GetApplicationHostConfigTemplate());
             applicationHostConfig
+                .Replace("{{PROTOCOL}}", _options.UseHttps ? "https" : "http")
                 .Replace("{{PORT}}", _options.Port.ToString())
                 .Replace("{{PHYSICAL_PATH}}", _physicalSitePath)
                 .Replace("{{APPLICATION_PATH}}", _options.ApplicationPath)

@@ -70,6 +70,13 @@ namespace DryRunner.Tests
             Directory.Delete(tempPath, true);
         }
 
+        [Test]
+        public void CanDeploySite_WithHttps()
+        {
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteServerOptions {UseHttps = true});
+            CheckSite(manager, "https://localhost:44333");
+        }
+
         private static void CheckSite(TestSiteManager testSiteManager, string surfToUrl)
         {
             testSiteManager.Start();
