@@ -73,7 +73,9 @@ namespace DryRunner
                 Arguments = string.Format("/config:\"{0}\" /systray:true", _applicationHostPath)
             };
 
-            var programfiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            var programfiles = Environment.GetFolderPath(_options.Use64BitIisExpress
+                ? Environment.SpecialFolder.ProgramFiles
+                : Environment.SpecialFolder.ProgramFilesX86);
             startInfo.FileName = programfiles + "\\IIS Express\\iisexpress.exe";
 
             try

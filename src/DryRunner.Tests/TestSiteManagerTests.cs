@@ -77,6 +77,13 @@ namespace DryRunner.Tests
             CheckSite(manager, "https://localhost:44333");
         }
 
+        [Test]
+        public void CanDeploySite_With64BitIis()
+        {
+            var manager = new TestSiteManager("DryRunner.TestWebsite", new TestSiteServerOptions {Use64BitIisExpress = true});
+            CheckSite(manager, "http://localhost:8888");
+        }
+
         private static void CheckSite(TestSiteManager testSiteManager, string surfToUrl)
         {
             testSiteManager.Start();

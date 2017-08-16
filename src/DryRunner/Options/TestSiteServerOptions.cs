@@ -36,6 +36,11 @@ namespace DryRunner.Options
         public bool UseHttps { get; set; }
 
         /// <summary>
+        /// Use a 64-bit IIS Express, default is <see langword="false" />.
+        /// </summary>
+        public bool Use64BitIisExpress { get; set; }
+
+        /// <summary>
         /// Default constructor
         /// </summary>
         public TestSiteServerOptions()
