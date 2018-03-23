@@ -209,11 +209,16 @@ namespace DryRunner.Options
             {
                 // VS2017 comes with MsBuild tools version 15 which does not include a registry key
                 int arrSize = 10, instanceCount;
-                ISetupInstance[] arr = new ISetupInstance[arrSize];
+                var arr = new ISetupInstance[arrSize];
                 new SetupConfiguration().EnumInstances().Next(arrSize, arr, out instanceCount);
 
-                ISetupInstance instance = arr.FirstOrDefault(i => i.GetInstallationVersion().Contains("15"));
-                string msBuildSubFolder = use64Bit ? @"MSBuild\15.0\Bin\amd64" : @"MSBuild\15.0\Bin\";
+                var instance = arr.FirstOrDefault(i => i.GetInstallationVersion().Contains("15"));
+
+                if (instance == null)
+                    throw new InvalidOperationException(
+                        string.Format("Could not find MSBuild executable for version '{0}'.", toolsVersion));
+
+                var msBuildSubFolder = use64Bit ? @"MSBuild\15.0\Bin\amd64" : @"MSBuild\15.0\Bin\";
                 return Path.Combine(instance.GetInstallationPath(), msBuildSubFolder, "MSBuild.exe");
             }
 
