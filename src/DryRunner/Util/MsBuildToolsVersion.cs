@@ -60,6 +60,7 @@ namespace DryRunner.Util
             Version = version;
         }
 
+        /// <inheritdoc />
         public override string ToString ()
         {
             return Version;
