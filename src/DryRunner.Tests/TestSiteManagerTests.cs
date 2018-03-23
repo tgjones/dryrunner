@@ -24,13 +24,10 @@ namespace DryRunner.Tests
         }
 
         [Test]
-        public void CanDeploySiteWithExplicitProjectFileName()
+        public void CanDeploySiteWithExplicitProjectFolderAndFileName()
         {
             var manager =
-                new TestSiteManager(new TestSiteDeployerOptions("DryRunner.TestWebsite")
-                {
-                  ProjectFileName = "DryRunner.TestWebsite.csproj"
-                });
+                new TestSiteManager(new TestSiteDeployerOptions("DryRunner.TestWebsite", "DryRunner.TestWebsite.csproj"));
             CheckSite(manager, "http://localhost:8888");
         }
 

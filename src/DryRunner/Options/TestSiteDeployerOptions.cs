@@ -25,17 +25,17 @@ namespace DryRunner.Options
         private readonly string[] _defaultBuildTargets = { "Clean", "Package" };
 
         /// <summary>
-        /// Name of the website project you want to test.
+        /// Name of the directory containing the project file.
+        /// With a full project file path of 'C:\Solution\Project\ProjectFile.csproj' the ProjectFolderName would be 'Project'.
         /// </summary>
-        public string ProjectName { get; private set; }
+        public string ProjectFolderName { get; private set; }
 
         /// <summary>
-        /// Filename of the website project you want to test, including the extension (i.e. .csproj, .vbproj).
-        /// This is optional - if not set, it will default to {ProjectName}.csproj.
+        /// File name of the website project you want to test, including the extension (e.g. .csproj, .vbproj).
         /// </summary>
-        public string ProjectFileName { get; set; }
+        public string ProjectFileName { get; private set; }
 
-        internal string ProjectFilePath { get; set; }
+        internal string ProjectFilePath { get; private set; }
 
         /// <summary>
         /// The path to the solution file.
@@ -43,7 +43,7 @@ namespace DryRunner.Options
         /// </summary>
         public string SolutionDir { get; set; }
 
-        internal string ProjectDir { get; set; }
+        internal string ProjectDir { get; private set; }
 
         /// <summary>
         /// The directory the web application is deployed to (defaults to "{ProjectDir}\obj\{BuildConfiguration}\Package\PackageTmp").
@@ -110,20 +110,36 @@ namespace DryRunner.Options
         /// </summary>
         public bool ShowMsBuildWindow { get; set; }
 
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public TestSiteDeployerOptions (string projectName)
+        private TestSiteDeployerOptions()
         {
-            if(projectName == null)
-              throw new ArgumentNullException("projectName");
-
-            ProjectName = projectName;
             BuildConfiguration = "Test";
             BuildTargets = _defaultBuildTargets;
             MsBuildToolsVersion = MsBuildToolsVersion.v4_0;
             MsBuildExePathResolver = GetMsBuildPathFromRegistry;
-            FinalizeAndValidate();
+        }
+
+        /// <summary>
+        /// Creates new <see cref="TestSiteDeployerOptions"/>. 
+        /// Use this constructor when the project folder and file name are equal (e.g. 'C:\Solution\Project\Project.csproj').
+        /// </summary>
+        public TestSiteDeployerOptions(string projectName): this(projectName, projectName + ".csproj")
+        {
+        }
+
+        /// <summary>
+        /// Creates new <see cref="TestSiteDeployerOptions"/>. 
+        /// Use this constructor when the project folder and file name are not equal (e.g. 'C:\Solution\ProjectFolder\ProjectFile.csproj').
+        /// </summary>
+        public TestSiteDeployerOptions (string projectFolderName, string projectFileName) : this()
+        {
+            if(projectFolderName == null)
+                throw new ArgumentNullException("projectFolderName");
+
+            if(projectFileName == null)
+                throw new ArgumentNullException("projectFileName");
+
+            ProjectFolderName = projectFolderName;
+            ProjectFileName = projectFileName;
         }
 
         internal void FinalizeAndValidate()
@@ -182,16 +198,11 @@ namespace DryRunner.Options
             if (string.IsNullOrWhiteSpace(SolutionDir))
                 SolutionDir = GetPathRelativeToCurrentAssemblyPath(@"..\..\..\");
 
-            if (string.IsNullOrWhiteSpace(ProjectDir))
-                ProjectDir = Path.Combine(SolutionDir, ProjectName) + @"\";
-
-            if (string.IsNullOrWhiteSpace(ProjectFileName))
-                ProjectFileName = ProjectName + ".csproj";
+            ProjectDir = Path.Combine(SolutionDir, ProjectFolderName);
+            ProjectFilePath = Path.Combine(ProjectDir, ProjectFileName);
 
             if (string.IsNullOrEmpty(DeployDirectory))
                 DeployDirectory = Path.Combine(ProjectDir, "obj", BuildConfiguration, "Package", "PackageTmp");
-
-            ProjectFilePath = Path.Combine(ProjectDir, ProjectFileName);
         }
 
         private static string GetPathRelativeToCurrentAssemblyPath(string relativePath)

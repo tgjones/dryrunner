@@ -1,3 +1,4 @@
+using System;
 using DryRunner.Options;
 
 namespace DryRunner
@@ -17,8 +18,13 @@ namespace DryRunner
         /// <param name="serverOptions">Options for the server (IIS Express).</param>
         public TestSiteManager(TestSiteDeployerOptions deployerOptions, TestSiteServerOptions serverOptions = null)
         {
+            serverOptions = serverOptions ?? new TestSiteServerOptions();
+
+            deployerOptions.FinalizeAndValidate();
+            serverOptions.FinalizeAndValidate();
+
             _deployer = new TestSiteDeployer(deployerOptions);
-            _server = new TestSiteServer(_deployer, serverOptions ?? new TestSiteServerOptions());
+            _server = new TestSiteServer(_deployer, serverOptions);
         }
 
         /// <summary>
