@@ -1,1 +1,2 @@
-﻿<h1>Hello World</h1>
+﻿@using System.Configuration
+<h1>@ConfigurationManager.AppSettings["Greeting"] World</h1>

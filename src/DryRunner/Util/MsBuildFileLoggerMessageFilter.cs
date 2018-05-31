@@ -1,23 +1,23 @@
 namespace DryRunner.Util
 {
+  /// <summary>
+  /// Allows filtering the messages shown by a <see cref="MsBuildFileLogger"/>.
+  /// </summary>
+  public enum MsBuildFileLoggerMessageFilter
+  {
     /// <summary>
-    /// Allows filtering the messages shown by a <see cref="MsBuildFileLogger"/>.
+    /// Show all messages.
     /// </summary>
-    public enum MsBuildFileLoggerMessageFilter
-    {
-        /// <summary>
-        /// Show all messages.
-        /// </summary>
-        Everything,
+    Everything,
 
-        /// <summary>
-        /// Show only error messages.
-        /// </summary>
-        ErrorsOnly,
+    /// <summary>
+    /// Show only error messages.
+    /// </summary>
+    ErrorsOnly,
 
-        /// <summary>
-        /// Show only warning messages.
-        /// </summary>
-        WarningsOnly
-    }
+    /// <summary>
+    /// Show only warning messages.
+    /// </summary>
+    WarningsOnly
+  }
 }

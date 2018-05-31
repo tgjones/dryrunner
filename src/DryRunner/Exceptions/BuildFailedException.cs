@@ -4,39 +4,39 @@ using JetBrains.Annotations;
 
 namespace DryRunner.Exceptions
 {
+  /// <summary>
+  /// BuildFailedException is thrown when the MSBuild build process failed.
+  /// </summary>
+  [Serializable]
+  [PublicAPI]
+  public class BuildFailedException : Exception
+  {
     /// <summary>
-    /// BuildFailedException is thrown when the MSBuild build process failed.
+    /// Contains all build output.
     /// </summary>
-    [Serializable]
-    [PublicAPI]
-    public class BuildFailedException : Exception
+    public string BuildOutput
     {
-        /// <summary>
-        /// Contains all build output.
-        /// </summary>
-        public string BuildOutput
-        {
-            get { return (string)Data["BuildOutput"]; }
-            private set { Data.Add("BuildOutput", value); }
-        }
-
-        /// <summary>
-        /// Constructs a BuildFailed exception.
-        /// </summary>
-        public BuildFailedException(string message, string buildOuput)
-            : base(message)
-        {
-            BuildOutput = buildOuput;
-        }
-
-        /// <summary>
-        /// Deserialization constructor.
-        /// </summary>
-        protected BuildFailedException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
+      get { return (string) Data["BuildOutput"]; }
+      private set { Data.Add("BuildOutput", value); }
     }
+
+    /// <summary>
+    /// Constructs a BuildFailed exception.
+    /// </summary>
+    public BuildFailedException(string message, string buildOuput)
+        : base(message)
+    {
+      BuildOutput = buildOuput;
+    }
+
+    /// <summary>
+    /// Deserialization constructor.
+    /// </summary>
+    protected BuildFailedException(
+        SerializationInfo info,
+        StreamingContext context)
+        : base(info, context)
+    {
+    }
+  }
 }
